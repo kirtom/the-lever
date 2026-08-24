@@ -37,7 +37,6 @@ export function useLever() {
   const [runStep, setRunStep] = useState(0);
   const [remaining, setRemaining] = useState(0);
   const [frameworkOpen, setFrameworkOpen] = useState(false);
-  const [recheck, setRecheck] = useState(null);
   const [matchTick, setMatchTick] = useState(0);
   const [harmChecked, setHarmChecked] = useState([]);
   const [fromShelf, setFromShelf] = useState(false);
@@ -309,9 +308,6 @@ export function useLever() {
     setScreen('home');
   }, [currentInst, answers]);
 
-  const recheckOn = recheck === null ? true : recheck;
-  const toggleRecheck = useCallback(() => setRecheck(!recheckOn), [recheckOn]);
-
   const openHistory = useCallback(() => setScreen('history'), []);
   const openProfileView = useCallback(() => setScreen('profileView'), []);
 
@@ -457,7 +453,6 @@ export function useLever() {
     },
 
     heldLine: '"' + inst.name + '" moved up your levers. It has now worked ' + heldStats[0] + ' times out of ' + heldStats[1] + '.',
-    recheckOn,
 
     harmItems: HARM_ITEMS.map((h, i) => ({ label: h.label, sub: h.sub, checked: harmChecked.indexOf(i) >= 0, toggle: () => toggleHarmItem(i) })),
     locationCta: { idle: 'Share my location', shared: 'Location shared ✓', copied: 'Coordinates copied ✓', failed: "Couldn't share — try again" }[shareState] || 'Share my location',
@@ -515,7 +510,6 @@ export function useLever() {
       bail,
       itHeld,
       itFailed,
-      toggleRecheck,
       sendLocation,
       logRelapse,
       redoProfile: startProfile,
