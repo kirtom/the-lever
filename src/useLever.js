@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { HARM_ITEMS, INSTRUMENTS, PROFILE_STEPS, QUESTIONS, RULE_BLOCK } from './data';
 import { UI } from './i18n';
+import { track } from './analytics';
 
 const STORAGE_KEY = 'the-lever:v1';
 
@@ -80,7 +81,17 @@ export function useLever() {
     }
   }, [profile, scores, history, onboarded, lang]);
 
-  const toggleLang = useCallback(() => setLang((l) => (l === 'en' ? 'ru' : 'en')), []);
+  useEffect(() => {
+    track('screen_view', { screen });
+  }, [screen]);
+
+  const toggleLang = useCallback(() => {
+    setLang((l) => {
+      const next = l === 'en' ? 'ru' : 'en';
+      track('language_toggled', { lang: next });
+      return next;
+    });
+  }, []);
 
   const currentInst = useCallback(() => INSTRUMENTS.find((i) => i.id === instId) || INSTRUMENTS[0], [instId]);
 
@@ -91,11 +102,13 @@ export function useLever() {
   }, []);
 
   const startProfile = useCallback(() => {
+    track('profile_setup_started');
     setStepIndex(0);
     setScreen('profile');
   }, []);
 
   const skipToHome = useCallback(() => {
+    track('profile_setup_skipped');
     setOnboarded(true);
     setScreen('home');
   }, []);
@@ -128,6 +141,7 @@ export function useLever() {
         });
         return changed ? next : prev;
       });
+      track('profile_completed');
       setOnboarded(true);
       setScreen('home');
     } else {
@@ -205,7 +219,9 @@ export function useLever() {
         n += 1;
         if (n > 2) {
           clearInterval(matchTimer.current);
-          setInstId(pickInstrument(rejected, ans));
+          const matchedId = pickInstrument(rejected, ans);
+          track('instrument_matched', { instrument: matchedId });
+          setInstId(matchedId);
           setFrameworkOpen(false);
           setScreen('instrument');
         } else {
@@ -217,6 +233,7 @@ export function useLever() {
   );
 
   const startSOS = useCallback(() => {
+    track('sos_started');
     setQIndex(0);
     setAnswers({});
     setRejected([]);
@@ -248,7 +265,9 @@ export function useLever() {
     const inst = currentInst();
     const rej = rejected.concat([inst.id]);
     setRejected(rej);
-    setInstId(pickInstrument(rej, answers));
+    const nextId = pickInstrument(rej, answers);
+    track('instrument_swapped', { instrument: nextId });
+    setInstId(nextId);
     setFrameworkOpen(false);
   }, [currentInst, rejected, pickInstrument, answers]);
 
@@ -267,6 +286,7 @@ export function useLever() {
 
   const startRun = useCallback(() => {
     const inst = currentInst();
+    track('run_started', { instrument: inst.id });
     setRunStep(0);
     setRemaining(inst.steps[0].t);
     setScreen('run');
@@ -293,6 +313,7 @@ export function useLever() {
 
   const itHeld = useCallback(() => {
     const inst = currentInst();
+    track('instrument_held', { instrument: inst.id });
     setScores((prev) => {
       const cur = prev[inst.id] || [0, 0];
       return { ...prev, [inst.id]: [cur[0] + 1, cur[1] + 1] };
@@ -304,6 +325,7 @@ export function useLever() {
 
   const itFailed = useCallback(() => {
     const inst = currentInst();
+    track('instrument_failed', { instrument: inst.id });
     setScores((prev) => {
       const cur = prev[inst.id] || [0, 0];
       return { ...prev, [inst.id]: [cur[0], cur[1] + 1] };
@@ -317,6 +339,7 @@ export function useLever() {
   const openProfileView = useCallback(() => setScreen('profileView'), []);
 
   const clearAllData = useCallback(() => {
+    track('data_cleared');
     clearInterval(tickTimer.current);
     clearInterval(matchTimer.current);
     // Profile and the learned shelf scores.
@@ -352,6 +375,7 @@ export function useLever() {
   }, []);
 
   const openHarm = useCallback(() => {
+    track('harm_screen_opened');
     setScreen('harm');
     fetchCoords();
   }, [fetchCoords]);
@@ -389,6 +413,7 @@ export function useLever() {
   }, [coords, lang]);
 
   const logRelapse = useCallback(() => {
+    track('relapse_logged');
     const done = harmChecked.length;
     setHistory((prev) => [{ when: 'today', isHarm: true, precautionsCount: done, ok: 'relapse' }, ...prev]);
     setOnboarded(true);
@@ -396,6 +421,7 @@ export function useLever() {
   }, [harmChecked, goHome]);
 
   const openInstrumentFromShelf = useCallback((id) => {
+    track('instrument_opened_from_shelf', { instrument: id });
     setInstId(id);
     setFromShelf(true);
     setFrameworkOpen(false);
