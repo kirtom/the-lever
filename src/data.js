@@ -290,22 +290,3 @@ export const HARM_ITEMS = [
   { label: 'Stay hydrated and put something in your stomach', sub: "If it's alcohol: one glass of water between each." },
   { label: 'Make sure one person knows where you are', sub: "Give them the actual address, not just 'out tonight'." },
 ];
-
-export const SEED_HISTORY = [
-  { when: 'Aug 21', name: 'Urge Surfing', detail: '9/10 · home alone · anxiety', outcome: 'Success', ok: true },
-  { when: 'Aug 19', name: 'The Fifteen-Minute Deal', detail: '6/10 · work · boredom', outcome: 'Success', ok: true },
-  { when: 'Aug 16', name: 'One Call, Script Written', detail: '8/10 · home alone · shame', outcome: 'Success', ok: true },
-  { when: 'Aug 14', name: 'Play The Tape Forward', detail: '7/10 · old bar · anticipation', outcome: 'Failure', ok: false },
-  { when: 'Aug 14', name: 'Harm reduction', detail: "Naloxone out · told someone · didn't use alone", outcome: 'Relapse', ok: 'relapse' },
-];
-
-export const SEED_SCORES = {
-  tipp: [4, 5],
-  surf: [7, 9],
-  tape: [3, 6],
-  leave: [2, 5],
-  ground: [5, 6],
-  delay: [6, 8],
-  call: [2, 3],
-  night: [1, 4],
-};

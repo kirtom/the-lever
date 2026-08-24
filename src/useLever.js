@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { HARM_ITEMS, INSTRUMENTS, PROFILE_STEPS, QUESTIONS, RULE_BLOCK, SEED_HISTORY, SEED_SCORES } from './data';
+import { HARM_ITEMS, INSTRUMENTS, PROFILE_STEPS, QUESTIONS, RULE_BLOCK } from './data';
 
 const STORAGE_KEY = 'the-lever:v1';
 const REGISTER_LABEL = 'SET UP MY PROFILE';
@@ -43,8 +43,8 @@ export function useLever() {
   const [fromShelf, setFromShelf] = useState(false);
   const [coords, setCoords] = useState(null);
   const [shareState, setShareState] = useState('idle');
-  const [scores, setScores] = useState(stored?.scores || SEED_SCORES);
-  const [history, setHistory] = useState(stored?.history || SEED_HISTORY);
+  const [scores, setScores] = useState(stored?.scores || {});
+  const [history, setHistory] = useState(stored?.history || []);
   const [onboarded, setOnboarded] = useState(!!stored?.onboarded);
 
   const tickTimer = useRef(null);

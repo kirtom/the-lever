@@ -9,6 +9,7 @@ export function History({ derived, actions }) {
       </div>
       <div style={{ height: 2, background: '#201e1d', margin: '10px 0 6px' }} />
       <p style={{ fontSize: 12.5, color: '#605d5d', margin: '0 0 14px' }}>On this device only. Nothing syncs, nothing is shared.</p>
+      {derived.history.length === 0 && <p style={{ fontSize: 13, color: '#9b9797', margin: 0 }}>Nothing logged yet.</p>}
       {derived.history.map((ep, i) => (
         <div key={i} style={{ display: 'flex', gap: 14, padding: '13px 0', borderBottom: '1px solid rgba(32,30,29,.22)' }}>
           <div style={{ width: 52, fontFamily: 'ui-monospace,Menlo,monospace', fontSize: 11, color: '#605d5d', paddingTop: 3 }}>{ep.when}</div>

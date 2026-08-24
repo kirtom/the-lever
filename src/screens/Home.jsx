@@ -51,6 +51,9 @@ export function Home({ derived, actions }) {
           <span style={{ fontSize: 11, fontWeight: 800, letterSpacing: '.1em', textTransform: 'uppercase' }}>Your levers</span>
         </div>
         <div style={{ height: 2, background: '#201e1d', margin: '10px 0 0' }} />
+        {derived.shelf.length === 0 && (
+          <p style={{ fontSize: 12, lineHeight: 1.4, color: '#9b9797', margin: '14px 0 0' }}>Nothing here yet. Run an instrument once and it starts filling in.</p>
+        )}
         {derived.shelf.map((row) => (
           <Hoverable
             key={row.rank}
