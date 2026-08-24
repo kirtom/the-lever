@@ -516,7 +516,7 @@ Full source: [`src/data.js`](src/data.js).
 
 Pushes to `main` deploy automatically via `.github/workflows/deploy.yml` to GitHub Pages. `vite.config.js` uses relative asset paths (`base: './'`) so the same build works unmodified both at the `github.io` project path and at the root of the `thelever.help` custom domain.
 
-The domain is claimed by `public/CNAME`. That path matters: the workflow publishes the `dist` directory as the Pages artifact, and each deploy replaces the site wholesale — a `CNAME` at the repo root would never reach `dist` and the custom domain would drop on the next deploy. Vite copies `public/` into `dist/` verbatim, so the file ships with every build and GitHub re-reads it each time.
+The custom domain is configured in **Settings → Pages**, not in the repository. There is deliberately no `CNAME` file: when a site publishes from a GitHub Actions workflow rather than from a branch, [GitHub ignores any `CNAME` file in the artifact](https://docs.github.com/en/pages/configuring-a-custom-domain-for-your-github-pages-site/managing-a-custom-domain-for-your-github-pages-site) and neither creates nor reads one. The domain lives in repository configuration and persists across deploys on its own. (A `CNAME` file *would* be required if the publishing source were ever switched back to a branch.)
 
 ## Analytics
 
