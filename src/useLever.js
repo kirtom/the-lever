@@ -96,27 +96,54 @@ export function useLever() {
 
   const nextStep = useCallback(() => {
     if (stepIndex === PROFILE_STEPS.length - 1) {
+      // Seed a 50% prior for instruments the user just told us have worked
+      // before, so the shelf isn't cold on day one — but never touch an
+      // instrument that already has real attempts logged against it.
+      const worked = profile.worked || [];
+      setScores((prev) => {
+        let changed = false;
+        const next = { ...prev };
+        INSTRUMENTS.forEach((inst) => {
+          if (!inst.worksForKey || worked.indexOf(inst.worksForKey) < 0) return;
+          const existing = next[inst.id];
+          if (existing && existing[1] > 0) return;
+          next[inst.id] = [1, 2];
+          changed = true;
+        });
+        return changed ? next : prev;
+      });
       setOnboarded(true);
       setScreen('home');
     } else {
       setStepIndex((i) => i + 1);
     }
-  }, [stepIndex]);
+  }, [stepIndex, profile.worked]);
 
   const pickInstrument = useCallback(
     (exclude, ans) => {
       const ruled = profile.ruledOut || [];
       const blocked = {};
       ruled.forEach((r) => (RULE_BLOCK[r] || []).forEach((id) => (blocked[id] = true)));
+      const triggers = profile.triggers || [];
+      const subs = profile.subs || [];
       let best = null;
       let bestScore = -1;
       INSTRUMENTS.forEach((inst) => {
         if (blocked[inst.id] || (exclude || []).indexOf(inst.id) >= 0) return;
         let s = 0;
         const t = inst.tags;
+        // Tier 2 — situational: tonight's five answers. Dominant signal.
         ['place', 'mag', 'emotion', 'body', 'time'].forEach((k) => {
           if (t[k] && ans[k] && t[k].indexOf(ans[k]) >= 0) s += k === 'mag' || k === 'time' ? 3 : 2;
         });
+        // Tier 3 — structural affinity: background profile pattern. Capped low so
+        // it nudges rather than competes with tonight's situational answers.
+        const triggerMatches = (inst.triggerTags || []).filter((tag) => triggers.indexOf(tag) >= 0).length;
+        s += Math.min(triggerMatches, 2);
+        const substanceMatches = (inst.substanceRelevance || []).filter((sub) => subs.indexOf(sub) >= 0).length;
+        s += Math.min(substanceMatches, 1);
+        // Tier 4 — learned: real outcomes (and the profile.worked seed at
+        // onboarding) reinforce what has actually held for this person.
         const sc = scores[inst.id] || [0, 0];
         s += sc[1] ? (sc[0] / sc[1]) * 1.5 : 0;
         if (s > bestScore) {
@@ -126,7 +153,7 @@ export function useLever() {
       });
       return (best || INSTRUMENTS[0]).id;
     },
-    [profile.ruledOut, scores]
+    [profile.ruledOut, profile.triggers, profile.subs, scores]
   );
 
   const runMatch = useCallback(
