@@ -52,7 +52,7 @@ export function Home({ derived, actions }) {
         </div>
         <div style={{ height: 2, background: '#201e1d', margin: '10px 0 0' }} />
         {derived.shelf.length === 0 && (
-          <p style={{ fontSize: 12, lineHeight: 1.4, color: '#9b9797', margin: '14px 0 0' }}>Nothing here yet. Run an instrument once and it starts filling in.</p>
+          <p style={{ fontSize: 12, lineHeight: 1.4, color: '#9b9797', margin: '14px 0 0' }}>Nothing here yet. Your most effective levers will be shown here for quick access.</p>
         )}
         {derived.shelf.map((row) => (
           <Hoverable
@@ -78,7 +78,7 @@ export function Home({ derived, actions }) {
           Profile
         </Hoverable>
         <Hoverable as="span" onClick={actions.openHarm} style={{ cursor: 'pointer' }} hoverStyle={{ color: '#ec3013' }}>
-          Harm reduction
+          Log a relapse
         </Hoverable>
       </div>
     </div>

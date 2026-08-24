@@ -19,31 +19,37 @@ export function Harm({ derived, actions }) {
         ))}
       </div>
       <div style={{ flex: 1 }} />
-      <p style={{ fontSize: 12, lineHeight: 1.4, color: 'rgba(243,242,242,.45)', margin: '0 0 10px' }}>{derived.locationNote}</p>
       <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
-        <Hoverable
-          onClick={actions.sendLocation}
-          style={{ background: '#ec3013', color: '#fff', padding: '18px 20px', fontWeight: 800, fontSize: 16, display: 'flex', justifyContent: 'space-between', cursor: 'pointer' }}
-          hoverStyle={{ background: '#dd2b0f' }}
-        >
-          <span>{derived.locationCta}</span>
-          <span>→</span>
-        </Hoverable>
         <Hoverable
           onClick={actions.goHome}
           style={{ border: '2px solid rgba(243,242,242,.3)', padding: '16px 20px', fontWeight: 800, fontSize: 16, cursor: 'pointer' }}
           hoverStyle={{ borderColor: '#ec3013' }}
         >
-          <span style={{ color: '#f3f2f2' }}>Back to </span>
-          <span style={{ color: '#ec3013' }}>The Lever</span>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span>Back to finding a solution</span>
+            <span>→</span>
+          </div>
         </Hoverable>
         <Hoverable
-          as="div"
-          onClick={actions.logRelapse}
-          style={{ fontSize: 12, fontWeight: 800, letterSpacing: '.06em', textTransform: 'uppercase', color: 'rgba(243,242,242,.45)', cursor: 'pointer', padding: '4px 0' }}
-          hoverStyle={{ color: '#f3f2f2' }}
+          onClick={actions.sendLocation}
+          style={{ background: '#ec3013', color: '#fff', padding: '18px 20px', fontWeight: 800, fontSize: 16, cursor: 'pointer' }}
+          hoverStyle={{ background: '#dd2b0f' }}
         >
-          Log tonight as a relapse
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span>{derived.locationCta}</span>
+            <span>→</span>
+          </div>
+          <div style={{ fontSize: 12, fontWeight: 600, opacity: 0.85, marginTop: 4 }}>{derived.locationNote}</div>
+        </Hoverable>
+        <Hoverable
+          onClick={actions.logRelapse}
+          style={{ background: '#201e1d', color: '#f3f2f2', padding: '18px 20px', fontWeight: 800, fontSize: 16, cursor: 'pointer' }}
+          hoverStyle={{ background: '#2d2b2b' }}
+        >
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <span>Log a relapse</span>
+            <span>→</span>
+          </div>
         </Hoverable>
       </div>
     </div>

@@ -435,7 +435,7 @@ export function useLever() {
       hint: step.hint,
       note: step.note,
       hasNote: !!step.note,
-      cta: stepIndex === PROFILE_STEPS.length - 1 ? 'Done — take me in' : 'Continue',
+      cta: stepIndex === PROFILE_STEPS.length - 1 ? 'Done' : 'Continue',
       options: step.options.map((o) => ({
         label: o,
         checked: (profile[step.key] || []).indexOf(o) >= 0,
