@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+<meta name="omelette-print-source" content="v1787538432597989 The Lever.dc.html">
+<script src="./doc-page.js"></script>
+<style>
+* { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+* { animation-delay: -99s !important; animation-duration: .001s !important;
+    animation-iteration-count: 1 !important; animation-fill-mode: both !important;
+    animation-play-state: running !important; transition-duration: 0s !important; }
+doc-page:not(:defined){visibility:hidden}
+</style>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" href="_ds/modernist-14d88b83-c8dc-4871-bf59-be577b12bbb6/styles.css">
+<script src="_ds/modernist-14d88b83-c8dc-4871-bf59-be577b12bbb6/_ds_bundle.js"></script>
+<style>
+body{margin:0;background:#cfccc8;font-family:Archivo,system-ui,sans-serif}
+a{color:#ec3013}a:hover{color:#ae1800}
+@keyframes lv-pulse{0%,100%{opacity:1}50%{opacity:.35}}
+</style>
+</helmet>
+<div style="min-height:100vh;display:flex;align-items:flex-start;justify-content:center;padding:36px 24px 60px;gap:36px">
+<doc-page margin="0.5in">
+
+<div style="font-family:Archivo,sans-serif;color:#201e1d">
+<div style="font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#ec3013">The Lever</div>
+<h1 style="font-size:30px;line-height:1.05;letter-spacing:-.02em;margin:6px 0 4px;font-weight:800">Screen reference</h1>
+<p style="font-size:12px;color:#605d5d;margin:0 0 4px">Every screen in the crisis flow, in order: welcome, profile, home, triage, matching, instrument, run, check-in, logged, harm reduction, log, profile view.</p>
+<div style="height:2px;background:#201e1d;margin:0 0 18px"></div>
+<div style="display:flex;flex-wrap:wrap;gap:20px;align-items:flex-start">
+
+<sc-if value="{{ isWelcome }}" hint-placeholder-val="{{ true }}">
+<div style="width:402px;height:874px;zoom:.7;flex:0 0 auto;break-inside:avoid;border:1px solid #d7d3d3;box-sizing:border-box;display:flex;flex-direction:column;justify-content:space-between;background:#201e1d;color:#f3f2f2;padding:96px 24px 52px">
+<div>
+<svg width="330" height="140" viewBox="0 0 372 158" fill="none" aria-label="The Lever" style="display:block;margin:0 auto">
+<defs>
+<clipPath id="lvTop"><rect x="-40" y="0" width="420" height="96"></rect></clipPath>
+<clipPath id="lvBot"><rect x="-40" y="96" width="420" height="90"></rect></clipPath>
+</defs>
+<text x="2" y="30" font-family="Archivo, sans-serif" font-weight="800" font-size="26" letter-spacing="9" fill="#f3f2f2">THE</text>
+<g clip-path="url(#lvBot)"><text x="0" y="132" font-family="Archivo, sans-serif" font-weight="800" font-size="106" letter-spacing="-5" fill="#f3f2f2">LEVER</text></g>
+<g clip-path="url(#lvTop)"><text x="0" y="132" font-family="Archivo, sans-serif" font-weight="800" font-size="106" letter-spacing="-5" fill="#ec3013" transform="rotate(-3.5 8 96)">LEVER</text></g>
+<rect x="0" y="94" width="372" height="3" fill="#f3f2f2"></rect>
+</svg>
+<div style="height:2px;background:#ec3013;margin:24px 0 20px;width:100%"></div>
+<ul style="list-style:none;margin:0 0 34px;padding:0;display:flex;flex-direction:column;gap:8px;max-width:340px">
+<li style="font-size:16px;line-height:1.4;color:rgba(243,242,242,.72);display:grid;grid-template-columns:14px 1fr;gap:10px;align-items:baseline"><span style="color:#ec3013;font-weight:800">—</span><span>No sobriety counter.</span></li>
+<li style="font-size:16px;line-height:1.4;color:rgba(243,242,242,.72);display:grid;grid-template-columns:14px 1fr;gap:10px;align-items:baseline"><span style="color:#ec3013;font-weight:800">—</span><span>No meetings search.</span></li>
+<li style="font-size:16px;line-height:1.4;color:rgba(243,242,242,.72);display:grid;grid-template-columns:14px 1fr;gap:10px;align-items:baseline"><span style="color:#ec3013;font-weight:800">—</span><span>No sponsor calls.</span></li>
+<li style="font-size:16px;line-height:1.4;color:rgba(243,242,242,.72);display:grid;grid-template-columns:14px 1fr;gap:10px;align-items:baseline"><span style="color:#ec3013;font-weight:800">—</span><span>No savings calculator.</span></li>
+</ul>
+<p style="font-size:17px;line-height:1.45;margin:0;color:#f3f2f2;max-width:340px;text-wrap:balance"><span style="display:block;font-weight:800">One button. <br>Five questions. <br>Five honest answers.</span><span style="display:block;margin-top:6px">This app will hand you <strong style="color: rgb(236, 48, 19); font-weight: 800; width: 280px; height: 39px">the lever</strong> that moves the thing you can't shift by hand.</span></p>
+</div>
+<div style="display:flex;flex-direction:column;gap:12px">
+<div onClick="{{ startProfile }}" style="background:#ec3013;color:#fff;padding:18px 20px;font-weight:800;font-size:17px;display:flex;justify-content:space-between;align-items:center;cursor:pointer;border:2px solid #ec3013;transition:background .12s,color .12s" style-hover="background:#f3f2f2;color:#ec3013;border-color:#f3f2f2">
+<span>{{ registerLabel }}</span><span>→</span>
+</div>
+<div onClick="{{ goHome }}" style="padding:18px 20px;font-size:17px;font-weight:800;letter-spacing:.02em;color:#f3f2f2;cursor:pointer;border:2px solid rgba(243,242,242,.45);text-align:left;display:flex;justify-content:space-between;align-items:center" style-hover="background:#f3f2f2;color:#161514;border-color:#f3f2f2"><span>SKIP IT. I NEED IT NOW!</span><span>→</span></div>
+<p style="font-size:13px;line-height:1.45;margin:6px 0 0;color:rgba(243,242,242,.5);max-width:340px">No account, no email, no password. <br>Your profile stays on this phone.</p>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isProfile }}" hint-placeholder-val="{{ false }}">
+<div style="width:402px;height:874px;zoom:.7;flex:0 0 auto;break-inside:avoid;border:1px solid #d7d3d3;box-sizing:border-box;display:flex;flex-direction:column;padding:62px 22px 34px;background:#f3f2f2">
+<div style="display:flex;justify-content:space-between;align-items:baseline;font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:800;color:#201e1d">
+<span>{{ step.counter }}</span>
+</div>
+<div style="height:2px;background:#201e1d;margin:10px 0 22px"></div>
+<div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:800;color:#ec3013;margin-bottom:8px" data-comment-anchor="8144a6efa3-div">{{ step.kicker }}</div>
+<h2 style="font-size:26px;line-height:1.06;letter-spacing:-.02em;margin:0 0 5px;color:#201e1d">{{ step.title }}</h2>
+<p style="font-size:13px;color:#605d5d;margin:0 0 14px" data-comment-anchor="95fedfdc99-p">{{ step.hint }}</p>
+<div style="display:flex;flex-direction:column;gap:6px;flex:1" data-comment-anchor="fc5a224b87-div">
+<sc-for list="{{ step.options }}" as="opt" hint-placeholder-count="5">
+<div onClick="{{ opt.toggle }}" style="display:flex;gap:10px;align-items:center;border:2px solid #201e1d;padding:9px 13px;font-size:14px;font-weight:600;cursor:pointer;background:#f3f2f2;color:#201e1d;min-height:42px" style-hover="background:#eae7e7">
+<span style="font-size:13px;color:#ec3013;width:12px">{{ opt.mark }}</span><span>{{ opt.label }}</span>
+</div>
+</sc-for>
+</div>
+<sc-if value="{{ step.hasNote }}" hint-placeholder-val="{{ false }}">
+<p style="font-size:11px;line-height:1.4;color:#9b9797;margin:14px 0 0">* {{ step.note }}</p>
+</sc-if>
+<div style="height:2px;background:#201e1d;margin:14px 0 14px"></div>
+<div onClick="{{ nextStep }}" style="background:#201e1d;color:#f3f2f2;padding:18px 20px;font-weight:800;font-size:16px;display:flex;justify-content:space-between;cursor:pointer" style-hover="background:#ec3013">
+<span>{{ step.cta }}</span><span>→</span>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isHome }}" hint-placeholder-val="{{ false }}">
+<div style="width:402px;height:874px;zoom:.7;flex:0 0 auto;break-inside:avoid;border:1px solid #d7d3d3;box-sizing:border-box;display:flex;flex-direction:column;background:#f3f2f2;padding-top:58px">
+<div style="display:flex;justify-content:space-between;align-items:center;padding:0 22px 12px">
+<svg width="140" height="59" viewBox="0 0 372 158" fill="none" aria-label="The Lever" style="display:block">
+<defs>
+<clipPath id="lvhTop"><rect x="-40" y="0" width="420" height="96"></rect></clipPath>
+<clipPath id="lvhBot"><rect x="-40" y="96" width="420" height="90"></rect></clipPath>
+</defs>
+<text x="2" y="30" font-family="Archivo, sans-serif" font-weight="800" font-size="26" letter-spacing="9" fill="#201e1d">THE</text>
+<g clip-path="url(#lvhBot)"><text x="0" y="132" font-family="Archivo, sans-serif" font-weight="800" font-size="106" letter-spacing="-5" fill="#201e1d" data-comment-anchor="9c74116c9f-text">LEVER</text></g>
+<g clip-path="url(#lvhTop)"><text x="0" y="132" font-family="Archivo, sans-serif" font-weight="800" font-size="106" letter-spacing="-5" fill="#ec3013" transform="rotate(-3.5 8 96)">LEVER</text></g>
+<rect x="0" y="94" width="372" height="3" fill="#201e1d"></rect>
+</svg>
+<span onClick="{{ openHistory }}" style="font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#605d5d;cursor:pointer" style-hover="color:#ec3013">Log</span>
+</div>
+<div style="height:2px;background:#201e1d;margin:0 22px"></div>
+<div onClick="{{ startSOS }}" style="margin:22px 22px 0;background:#ec3013;color:#fff;padding:22px 22px 20px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:8px;border:3px solid #201e1d;boxShadow:0 10px 0 #201e1d;transition:transform .06s, box-shadow .06s;userSelect:none" style-hover="background:#dd2b0f;transform:translateY(-1px);boxShadow:0 11px 0 #201e1d" style-active="transform:translateY(10px);boxShadow:0 0 0 #201e1d" data-comment-anchor="cbe6079acb-div">
+<div style="font-size:64px;line-height:.84;font-weight:800;letter-spacing:-.05em;text-align:center">HELP!</div>
+<div style="font-size:14px;font-weight:600;opacity:.86;text-align:center">Five questions. One Lever.</div>
+</div>
+<div style="padding:20px 22px 0" data-comment-anchor="51b3944dd5-div">
+<div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase" data-comment-anchor="a3003ca25b-span">Your levers</span></div>
+<div style="height:2px;background:#201e1d;margin:10px 0 0"></div>
+<sc-for list="{{ shelf }}" as="row" hint-placeholder-count="4">
+<div onClick="{{ row.open }}" style="display:flex;gap:14px;align-items:flex-start;padding:8px 0;border-bottom:1px solid rgba(32,30,29,.25);cursor:pointer" style-hover="background:#eae7e7">
+<span style="font-family:ui-monospace,Menlo,monospace;font-size:12px;font-weight:800;color:#ec3013;padding-top:3px">{{ row.rank }}</span>
+<div style="flex:1">
+<div style="font-size:16px;font-weight:800;letter-spacing:-.01em;line-height:1.2">{{ row.name }}</div>
+<div style="font-size:12px;color:#201e1d;margin-top:4px;font-weight:600">{{ row.dur }}</div>
+<div style="font-size:12px;color:#605d5d;margin-top:2px">{{ row.framework }}</div>
+</div>
+<span style="font-size:26px;font-weight:800;color:#201e1d;line-height:1;padding-top:2px">→</span>
+</div>
+</sc-for>
+</div>
+<div style="flex:1"></div>
+<div style="padding:12px 22px 30px;display:flex;gap:18px;font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#605d5d">
+<span onClick="{{ openProfileView }}" style="cursor:pointer" style-hover="color:#ec3013">Profile</span>
+<span onClick="{{ openHarm }}" style="cursor:pointer" style-hover="color:#ec3013" data-comment-anchor="1e1a205232-span">Harm reduction</span>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isQuestion }}" hint-placeholder-val="{{ false }}">
+<div style="width:402px;height:874px;zoom:.7;flex:0 0 auto;break-inside:avoid;border:1px solid #d7d3d3;box-sizing:border-box;display:flex;flex-direction:column;background:#161514;color:#f3f2f2;padding:58px 22px 26px" data-comment-anchor="cf24706af4-div">
+<div style="display:flex;justify-content:space-between;align-items:baseline;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:800">
+<span style="color:#ec3013">{{ q.counter }}</span><span onClick="{{ goHome }}" style="cursor:pointer;color:rgba(243,242,242,.45)">Exit</span>
+</div>
+<div style="height:2px;background:#ec3013;margin:8px 0 14px"></div>
+<h2 style="font-size:27px;line-height:1.04;letter-spacing:-.025em;margin:0 0 14px;color:#f3f2f2;max-width:320px">{{ q.title }}</h2>
+<div style="display:flex;flex-direction:column;gap:6px">
+<sc-for list="{{ q.options }}" as="opt" hint-placeholder-count="5">
+<div onClick="{{ opt.pick }}" style="border:2px solid rgba(243,242,242,.3);padding:0 14px;min-height:44px;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer" style-hover="border-color:#ec3013;background:#ec3013">
+<span style="font-size:15px;font-weight:800;letter-spacing:-.01em">{{ opt.label }}</span>
+<span style="font-size:12px;color:rgba(243,242,242,.5);text-align:right">{{ opt.sub }}</span>
+</div>
+</sc-for>
+</div>
+<div style="flex:1" data-comment-anchor="702dd20ad7-div"></div>
+<div onClick="{{ back }}" style="font-size:12px;color:rgba(243,242,242,.4);cursor:pointer" style-hover="color:#f3f2f2">← Back</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isMatching }}" hint-placeholder-val="{{ false }}">
+<div style="width:402px;height:874px;zoom:.7;flex:0 0 auto;break-inside:avoid;border:1px solid #d7d3d3;box-sizing:border-box;display:flex;flex-direction:column;justify-content:center;background:#161514;color:#f3f2f2;padding:0 22px">
+<div style="width:36px;height:36px;background:#ec3013;animation:lv-pulse 1s infinite"></div>
+<div style="font-size:26px;font-weight:800;letter-spacing:-.02em;margin-top:22px">{{ matchLine }}</div>
+<div style="height:2px;background:rgba(243,242,242,.25);margin:20px 0 0"></div>
+<div style="font-size:12px;color:rgba(243,242,242,.45);margin-top:10px">Reading every instrument against your profile</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isInstrument }}" hint-placeholder-val="{{ false }}">
+<div style="width:402px;height:874px;zoom:.7;flex:0 0 auto;break-inside:avoid;border:1px solid #d7d3d3;box-sizing:border-box;display:flex;flex-direction:column;background:#f3f2f2;padding:74px 22px 40px">
+<div style="display:flex;justify-content:space-between;font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:800;color:#ec3013"><span>{{ inst.kicker }}</span><span onClick="{{ goHome }}" style="cursor:pointer;color:#9b9797">Close</span></div>
+<div style="height:2px;background:#201e1d;margin:10px 0 18px"></div>
+<h2 style="font-size:36px;line-height:1;letter-spacing:-.03em;margin:0 0 4px">{{ inst.name }}</h2>
+<sc-if value="{{ showFootnote }}" hint-placeholder-val="{{ true }}">
+<div onClick="{{ toggleFramework }}" style="font-size:12px;font-weight:600;color:#ae1800;border-bottom:1px dotted #ae1800;align-self:flex-start;cursor:pointer;padding-bottom:1px">{{ inst.framework }}</div>
+</sc-if>
+<sc-if value="{{ frameworkOpen }}" hint-placeholder-val="{{ false }}">
+<div style="background:#eae7e7;border-left:2px solid #ec3013;padding:12px 14px;font-size:13px;line-height:1.5;color:#444141;margin-top:12px">{{ inst.frameworkNote }}</div>
+</sc-if>
+<div style="font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;margin:22px 0 8px">Why this one</div>
+<p style="font-size:15px;line-height:1.5;margin:0 0 6px;color:#201e1d">{{ readback }}</p>
+<p style="font-size:15px;line-height:1.5;margin:0;color:#605d5d">{{ inst.why }}</p>
+<div style="font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;margin:22px 0 8px">What it does</div>
+<p style="font-size:15px;line-height:1.5;margin:0;color:#605d5d">{{ inst.does }}</p>
+<div style="height:2px;background:#201e1d;margin:22px 0 12px"></div>
+<div style="display:flex;justify-content:space-between;font-size:12px;color:#605d5d"><span>{{ inst.stepCount }}</span><span>{{ inst.duration }}</span></div>
+<div style="flex:1"></div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<div onClick="{{ startRun }}" style="background:#ec3013;color:#fff;padding:20px;font-weight:800;font-size:17px;display:flex;justify-content:space-between;cursor:pointer" style-hover="background:#dd2b0f"><span>{{ inst.cta }}</span><span>→</span></div>
+<div onClick="{{ swapInstrument }}" style="border:2px solid #201e1d;padding:14px 20px;font-weight:800;font-size:14px;cursor:pointer" style-hover="background:#eae7e7">Give me a different one</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isRun }}" hint-placeholder-val="{{ false }}">
+<div style="width:402px;height:874px;zoom:.7;flex:0 0 auto;break-inside:avoid;border:1px solid #d7d3d3;box-sizing:border-box;display:flex;flex-direction:column;background:#161514;color:#f3f2f2;padding:74px 22px 40px">
+<div style="display:flex;justify-content:space-between;font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:800"><span style="color:#ec3013">{{ run.counter }}</span><span>{{ inst.name }}</span></div>
+<div style="height:6px;background:rgba(243,242,242,.18);margin:10px 0 0"><div style="height:6px;background:#ec3013;width:{{ run.pct }}"></div></div>
+<div style="font-family:ui-monospace,Menlo,monospace;font-size:70px;font-weight:400;letter-spacing:-.04em;margin:28px 0 0">{{ run.clock }}</div>
+<h2 style="font-size:30px;line-height:1.06;letter-spacing:-.025em;margin:18px 0 12px;max-width:330px">{{ run.label }}</h2>
+<p style="font-size:16px;line-height:1.55;color:rgba(243,242,242,.6);margin:0;max-width:330px">{{ run.body }}</p>
+<div style="flex:1"></div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<div onClick="{{ nextRunStep }}" style="background:#f3f2f2;color:#161514;padding:18px 20px;font-weight:800;font-size:16px;display:flex;justify-content:space-between;cursor:pointer" style-hover="background:#ec3013;color:#fff"><span>{{ run.cta }}</span><span>→</span></div>
+<div onClick="{{ bail }}" style="padding:12px 2px;font-size:13px;color:rgba(243,242,242,.45);cursor:pointer" style-hover="color:#ec3013">This isn't working →</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isAfter }}" hint-placeholder-val="{{ false }}">
+<div style="width:402px;height:874px;zoom:.7;flex:0 0 auto;break-inside:avoid;border:1px solid #d7d3d3;box-sizing:border-box;display:flex;flex-direction:column;background:#161514;color:#f3f2f2;padding:74px 22px 40px">
+<div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:800;color:#ec3013">One question</div>
+<div style="height:2px;background:#ec3013;margin:10px 0 26px"></div>
+<h2 style="font-size:38px;line-height:1;letter-spacing:-.03em;margin:0 0 10px">Where is it now?</h2>
+<p style="font-size:15px;color:rgba(243,242,242,.55);margin:0">Honest answer. Wrong answers make the next pick worse.</p>
+<div style="flex:1"></div>
+<div style="display:flex;flex-direction:column;gap:8px">
+<div onClick="{{ itHeld }}" style="border:2px solid rgba(243,242,242,.3);padding:20px 18px;cursor:pointer" style-hover="border-color:#ec3013;background:#ec3013">
+<div style="font-size:20px;font-weight:800">It came down</div><div style="font-size:13px;color:rgba(243,242,242,.55);margin-top:2px">This one moves up your levers</div></div>
+<div onClick="{{ itFailed }}" style="border:2px solid rgba(243,242,242,.3);padding:20px 18px;cursor:pointer" style-hover="border-color:#ec3013;background:#ec3013">
+<div style="font-size:20px;font-weight:800">Still climbing</div><div style="font-size:13px;color:rgba(243,242,242,.55);margin-top:2px">We try a different instrument</div></div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isHeld }}" hint-placeholder-val="{{ false }}">
+<div style="width:402px;height:874px;zoom:.7;flex:0 0 auto;break-inside:avoid;border:1px solid #d7d3d3;box-sizing:border-box;display:flex;flex-direction:column;background:#f3f2f2;padding:74px 22px 40px">
+<div style="width:44px;height:44px;background:#ec3013"></div>
+<h2 style="font-size:38px;line-height:1;letter-spacing:-.03em;margin:24px 0 10px">Logged.</h2>
+<p style="font-size:16px;line-height:1.5;color:#605d5d;margin:0 0 4px">{{ heldLine }}</p>
+<div style="height:2px;background:#201e1d;margin:24px 0 16px"></div>
+<div onClick="{{ toggleRecheck }}" style="display:flex;gap:12px;align-items:flex-start;cursor:pointer;padding:2px 0">
+<span style="font-size:14px;color:#ec3013;width:14px">{{ recheckMark }}</span>
+<div><div style="font-size:15px;font-weight:800">Check back in 30 minutes</div><div style="font-size:13px;color:#605d5d">One buzz. Same five questions if it's back.</div></div>
+</div>
+<div style="flex:1"></div>
+<div onClick="{{ goHome }}" style="background:#201e1d;color:#f3f2f2;padding:18px 20px;font-weight:800;font-size:16px;display:flex;justify-content:space-between;cursor:pointer" style-hover="background:#ec3013"><span>Done</span><span>→</span></div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isHarm }}" hint-placeholder-val="{{ false }}">
+<div style="width:402px;height:874px;zoom:.7;flex:0 0 auto;break-inside:avoid;border:1px solid #d7d3d3;box-sizing:border-box;display:flex;flex-direction:column;background:#161514;color:#f3f2f2;padding:62px 22px 30px" data-comment-anchor="24816a3d61-div">
+<div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;font-weight:800;color:#ec3013">Harm reduction</div>
+<div style="height:2px;background:#ec3013;margin:8px 0 14px"></div>
+<h2 style="font-size:30px;line-height:1.02;letter-spacing:-.03em;margin:0 0 8px;max-width:320px" data-comment-anchor="bd69b0f9e4-h2">Harm reduction strategy</h2>
+<p style="font-size:15px;line-height:1.5;color:rgba(243,242,242,.6);margin:0 0 12px" data-comment-anchor="e9a410a57d-p">The goal is no longer to stop. It is to stay alive and not be alone. Work down the list.</p>
+<div style="display:flex;flex-direction:column">
+<sc-for list="{{ harmItems }}" as="item" hint-placeholder-count="5">
+<div onClick="{{ item.toggle }}" style="display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-top:1px solid rgba(243,242,242,.2);cursor:pointer">
+<span style="font-size:14px;color:#ec3013;width:14px;padding-top:2px">{{ item.mark }}</span>
+<div><div style="font-size:15px;font-weight:800;line-height:1.22">{{ item.label }}</div><div style="font-size:12px;color:rgba(243,242,242,.5);margin-top:2px">{{ item.sub }}</div></div>
+</div>
+</sc-for>
+</div>
+<div style="flex:1"></div>
+<div style="display:flex;flex-direction:column;gap:10px">
+<div onClick="{{ sendLocation }}" style="background:#ec3013;color:#fff;padding:18px 20px;font-weight:800;font-size:16px;display:flex;justify-content:space-between;cursor:pointer" style-hover="background:#dd2b0f"><span data-comment-anchor="064e0d4fd3-span">{{ locationCta }}</span><span>→</span></div>
+<div onClick="{{ goHome }}" style="border:2px solid rgba(243,242,242,.3);padding:13px 20px;font-weight:800;font-size:14px;cursor:pointer" style-hover="border-color:#ec3013" data-comment-anchor="bf9b848a8f-div"><span style="color:#f3f2f2">Back to </span><span style="color:#ec3013">The Lever</span></div>
+<div onClick="{{ logRelapse }}" style="font-size:12px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:rgba(243,242,242,.45);cursor:pointer;padding:4px 0" style-hover="color:#f3f2f2">Log tonight as a relapse</div>
+</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isHistory }}" hint-placeholder-val="{{ false }}">
+<div style="width:402px;height:874px;zoom:.7;flex:0 0 auto;break-inside:avoid;border:1px solid #d7d3d3;box-sizing:border-box;display:flex;flex-direction:column;background:#f3f2f2;padding:74px 22px 40px">
+<div style="display:flex;justify-content:space-between;font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:800"><span>Private log</span><span onClick="{{ goHome }}" style="cursor:pointer;color:#9b9797">Close</span></div>
+<div style="height:2px;background:#201e1d;margin:10px 0 6px"></div>
+<p style="font-size:12.5px;color:#605d5d;margin:0 0 14px">On this device only. Nothing syncs, nothing is shared.</p>
+<sc-for list="{{ history }}" as="ep" hint-placeholder-count="5">
+<div style="display:flex;gap:14px;padding:13px 0;border-bottom:1px solid rgba(32,30,29,.22)">
+<div style="width:52px;font-family:ui-monospace,Menlo,monospace;font-size:11px;color:#605d5d;padding-top:3px">{{ ep.when }}</div>
+<div style="flex:1"><div style="font-size:15px;font-weight:800;line-height:1.2">{{ ep.name }}</div><div style="font-size:12px;color:#605d5d;margin-top:2px">{{ ep.detail }}</div></div>
+<div style="font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;padding-top:3px"><span style="color:{{ ep.color }};background:{{ ep.bg }};padding:{{ ep.pad }};display:inline-block">{{ ep.outcome }}</span></div>
+</div>
+</sc-for>
+</div>
+</sc-if>
+
+<sc-if value="{{ isProfileView }}" hint-placeholder-val="{{ false }}">
+<div style="width:402px;height:874px;zoom:.7;flex:0 0 auto;break-inside:avoid;border:1px solid #d7d3d3;box-sizing:border-box;display:flex;flex-direction:column;background:#f3f2f2;padding:74px 22px 40px" data-comment-anchor="922c59208e-div">
+<div style="display:flex;justify-content:space-between;font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:800"><span data-comment-anchor="1b7ee10c91-span">Your profile</span><span onClick="{{ goHome }}" style="cursor:pointer;color:#9b9797">Close</span></div>
+<div style="height:2px;background:#201e1d;margin:10px 0 18px"></div>
+<sc-for list="{{ profileRows }}" as="row" hint-placeholder-count="6">
+<div style="padding:12px 0;border-bottom:1px solid rgba(32,30,29,.22)">
+<div style="font-size:11px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#ec3013">{{ row.label }}</div>
+<div style="font-size:15px;line-height:1.4;margin-top:4px">{{ row.value }}</div>
+</div>
+</sc-for>
+<div style="flex:1"></div>
+<div onClick="{{ startProfile }}" style="border:2px solid #201e1d;padding:16px 20px;font-weight:800;font-size:15px;display:flex;justify-content:space-between;cursor:pointer" style-hover="background:#eae7e7" data-comment-anchor="5f7e1c5154-div"><span>Redo profile creation</span><span>→</span></div>
+</div>
+</sc-if>
+
+</div>
+</div>
+</doc-page>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:470,&quot;height&quot;:960},&quot;registerLabel&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;SET UP MY PROFILE&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Copy&quot;},&quot;sosDepth&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Five questions&quot;,&quot;Three questions&quot;,&quot;Straight to an instrument&quot;],&quot;default&quot;:&quot;Five questions&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Triage&quot;},&quot;showFrameworkFootnote&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Triage&quot;},&quot;recheckDefault&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Triage&quot;}}">
+const PROFILE_STEPS = [
+  { kicker: "01 — The substance", title: "What are we working against?", hint: "Pick every one that applies.", key: "subs",
+    note: "If you don't find yours, choose Other. More substances and instruments tailored to them will be added soon.",
+    options: ["Alcohol", "Opioids (Heroin, Fentanyl)", "Stimulants (Meth, Cocaine)", "Benzos (Xanax, Valium)", "Nicotine", "Other"] },
+  { kicker: "02 — The trigger", title: "What sets it off?", hint: "Pick the ones that show up most.",
+    key: "triggers", options: ["Hunger", "Anger", "Loneliness", "Tiredness", "Boredom", "Wanting a reward", "Sexual arousal", "Easy money", "Environment cues", "Physical pain", "Withdrawal"] },
+  { kicker: "03 — What works for you", title: "What has actually worked before?", hint: "Even once counts.",
+    key: "worked", options: ["Calling someone", "Getting outside", "Cold water", "Waiting it out", "Writing it down", "Nothing yet"] },
+  { kicker: "04 — Never suggest this", title: "What should the app never hand you?", hint: "This is a hard filter. It will be obeyed.",
+    key: "ruledOut", options: ["Religious or spirituality talk", "Anything over ten minutes", "Talking to a person", "Outdoor or sport activities", "Tough love", "Nothing — try me!"] },
+  { kicker: "05 — Medication and health", title: "What are you on, and what are you dealing with?", hint: "This tells us which techniques are safe for you.",
+    key: "treatment", options: ["Suboxone or methadone", "Naltrexone", "Antidepressants", "In therapy", "Anxiety treatment", "ADHD", "Trauma", "Insomnia"] }
+];
+
+const QUESTIONS = [
+  { key: "place", title: "Where are you right now?", options: [
+    { label: "Home alone", sub: "" }, { label: "Home with other people", sub: "" },
+    { label: "Out in public", sub: "" }, { label: "At work", sub: "" },
+    { label: "Outdoors alone", sub: "" },
+    { label: "Somewhere I used to use", sub: "" }, { label: "Other", sub: "" }] },
+  { key: "mag", title: "How loud is it?", options: [
+    { label: "1–3", sub: "background noise" }, { label: "4–6", sub: "distracting" },
+    { label: "7–8", sub: "hard to think" }, { label: "9–10", sub: "madness" }] },
+  { key: "emotion", title: "Which emotion is strongest right now?", options: [
+    { label: "Anxiety", sub: "" }, { label: "Anger", sub: "" }, { label: "Shame", sub: "" },
+    { label: "Emptiness", sub: "" }, { label: "Grief", sub: "" }, { label: "Boredom", sub: "" },
+    { label: "Anticipation", sub: "" }, { label: "Loneliness", sub: "" },
+    { label: "Guilt", sub: "" }, { label: "Fear", sub: "" }, { label: "Restlessness", sub: "" }] },
+  { key: "body", title: "How does your body feel right now?", options: [
+    { label: "Wired", sub: "" }, { label: "Shaky or sick", sub: "" },
+    { label: "Numb", sub: "" }, { label: "Exhausted", sub: "" },
+    { label: "Tense", sub: "" }, { label: "In pain", sub: "" },
+    { label: "Nauseous", sub: "" }, { label: "Sweating", sub: "" },
+    { label: "Heart racing", sub: "" }, { label: "Normal", sub: "" }] },
+  { key: "time", title: "How long have you got?", options: [
+    { label: "Two minutes", sub: "" },
+    { label: "Five minutes", sub: "" }, { label: "Ten minutes", sub: "" },
+    { label: "Thirty minutes", sub: "" },
+    { label: "As long as it takes", sub: "" }] }
+];
+
+const INSTRUMENTS = [
+  { id: "tipp", name: "Cold Water, Then One Breath", framework: "Dialectical Behaviour Therapy — TIPP (distress tolerance)",
+    frameworkNote: "Temperature, Intense exercise, Paced breathing, Paired muscle relaxation. Marsha Linehan's crash protocol for when the emotional system is past reasoning with.",
+    why: "At a 9 you cannot be talked out of anything, so this doesn't try. Cold on the face triggers the mammalian dive reflex and drops your heart rate inside sixty seconds. It buys the ninety seconds where a decision becomes possible again.",
+    does: "Physically interrupts the surge. It does not resolve anything, and it is not supposed to.",
+    duration: "90 seconds", steps: [
+      { t: 30, label: "Cold water on your face", body: "Sink, bottle, ice, snow. Face and the back of your neck. Hold it there while you count thirty." },
+      { t: 20, label: "Breathe out longer than you breathe in", body: "In for four. Out for eight. The long exhale is the part that works." },
+      { t: 40, label: "Sit down and say the time out loud", body: "Name the hour and where you are. You are coming back into the room." }],
+    tags: { mag: ["9–10", "7–8"], time: ["Two minutes", "Five minutes"], body: ["Wired", "Shaky or sick", "Heart racing", "Sweating", "Tense"], place: ["Home alone", "Outdoors alone", "Out in public", "At work"] } },
+  { id: "surf", name: "Urge Surfing", framework: "Mindfulness-Based Relapse Prevention",
+    frameworkNote: "Alan Marlatt's core technique. The urge is treated as a wave with a peak and a decline rather than a command; you time it instead of fighting it.",
+    why: "Cravings have a shape. Yours peaks and falls in about twenty minutes whether or not you act on it. This makes the falling part visible so the peak stops feeling permanent.",
+    does: "Turns an emergency into a weather event you are watching from the shore.",
+    duration: "6 minutes", steps: [
+      { t: 60, label: "Find where it lives in your body", body: "Chest, jaw, stomach, hands. Don't describe it as wanting. Describe it as pressure, temperature, weight." },
+      { t: 90, label: "Rate it, then wait", body: "Give it a number out of ten. Keep watching the same spot. Don't argue with it." },
+      { t: 90, label: "Rate it again", body: "Higher, lower, moved somewhere else? Whatever it did, it did without you doing anything." },
+      { t: 120, label: "Ride it down", body: "Stay with it until the number drops by two. It will. That is the whole trick." }],
+    tags: { mag: ["4–6", "7–8"], time: ["Ten minutes", "Thirty minutes"], emotion: ["Anxiety", "Anticipation", "Boredom", "Restlessness"], place: ["Home alone", "Home with other people"] } },
+  { id: "tape", name: "Play The Tape Forward", framework: "Cognitive Behavioural Therapy — decisional balance",
+    frameworkNote: "Standard cognitive-behavioural relapse prevention: the craving only shows you the first frame, so you deliberately run the reel to the end.",
+    why: "It feels good right now — that is why this one is dangerous. The craving is showing you the first ten minutes and hiding the next fourteen hours. You are going to watch the whole thing.",
+    does: "Restores the missing consequences so the decision is made on complete information.",
+    duration: "4 minutes", steps: [
+      { t: 45, label: "First ten minutes. Say it out loud", body: "Exactly what you'd get. Don't sanitise it — the relief is real and pretending otherwise breaks the exercise." },
+      { t: 45, label: "Hour three", body: "Where are you, who have you texted, what is the count at?" },
+      { t: 60, label: "Tomorrow, 7am", body: "First thought on waking. Who you have to look at. What you have to redo." },
+      { t: 60, label: "Now the other reel", body: "Same 7am, if you don't. Nothing dramatic. Just ordinary and intact." }],
+    tags: { mag: ["4–6", "7–8"], time: ["Five minutes", "Ten minutes"], emotion: ["Anticipation", "Boredom", "Emptiness", "Guilt"], place: ["Somewhere I used to use", "Home alone"] } },
+  { id: "leave", name: "Leave The Room", framework: "Stimulus control — behavioural",
+    frameworkNote: "Cue exposure is the strongest single predictor of use. The cheapest intervention available is distance, applied immediately.",
+    why: "You are standing in the place. No technique out-argues a cue this loud — everything else works better from two hundred metres away. Move first, think second.",
+    does: "Removes the trigger instead of managing it.",
+    duration: "3 minutes", steps: [
+      { t: 20, label: "Stand up. Now", body: "Before the next sentence. Coat, phone, door." },
+      { t: 60, label: "Two hundred metres, any direction", body: "Uphill if there is an uphill. Count the paces." },
+      { t: 60, label: "Text one person that you left", body: "Three words is enough. It makes going back a decision you'd have to explain." }],
+    tags: { mag: ["7–8", "9–10"], time: ["Two minutes", "Five minutes", "Ten minutes"], place: ["Somewhere I used to use", "Out in public"] } },
+  { id: "ground", name: "5–4–3–2–1", framework: "Trauma-informed grounding",
+    frameworkNote: "Sensory orienting. Used to bring attention out of an internal loop and back into the present environment, silently and in public.",
+    why: "You're in public and shaking. This one is invisible — nobody standing next to you will know you are doing it, and it works on anxiety faster than it works on craving.",
+    does: "Pulls attention out of your head and into the room.",
+    duration: "3 minutes", steps: [
+      { t: 45, label: "Five things you can see", body: "Small and specific. A scuff, a bolt, a price tag." },
+      { t: 40, label: "Four you can feel", body: "Fabric at your wrist, floor through your shoes, air on your face." },
+      { t: 35, label: "Three you can hear", body: "Nearest, then furthest." },
+      { t: 30, label: "Two you can smell, one you can taste", body: "Then breathe out slowly and look up." }],
+    tags: { mag: ["4–6", "7–8"], time: ["Two minutes", "Five minutes"], place: ["Out in public", "At work"], emotion: ["Anxiety", "Shame", "Fear"], body: ["Wired", "Shaky or sick", "Nauseous", "Tense"] } },
+  { id: "delay", name: "The Fifteen-Minute Deal", framework: "SMART Recovery — Deny, Escape, Avoid, Distract, Substitute",
+    frameworkNote: "Deny, Escape, Avoid, Distract, Substitute. You are not promising never; you are promising not yet, for a period short enough to be honest.",
+    why: "You never agreed to quit tonight. You agreed to fifteen minutes, which is a promise you can actually keep, and cravings rarely survive being made to wait with something in your hands.",
+    does: "Converts an absolute into a delay you won't have to lie about.",
+    duration: "15 minutes", steps: [
+      { t: 30, label: "Set fifteen minutes. Say the deal out loud", body: "\"Not before this runs out.\" That's the whole contract." },
+      { t: 60, label: "Put something in your hands", body: "Food, shower, dishes, cigarette, cold drink. Hands busy, ideally wet or cold." },
+      { t: 90, label: "When it runs out, re-rate it", body: "If it dropped, take another fifteen. If it didn't, we change instrument." }],
+    tags: { mag: ["4–6", "1–3"], time: ["Thirty minutes", "As long as it takes"], emotion: ["Boredom", "Emptiness"], body: ["Numb", "Exhausted", "In pain"] } },
+  { id: "call", name: "One Call, Script Written", framework: "Social support — twelve-step adjacent",
+    frameworkNote: "The reach-out, stripped of fellowship language. What carries over from AA and NA is only this: the odds change when someone else knows in real time.",
+    why: "The reason this fails is never willingness, it's not knowing what to open with — so the opening line is written for you and you only have to press call.",
+    does: "Puts a second person inside the next hour.",
+    duration: "5 minutes", steps: [
+      { t: 20, label: "Read the line", body: "\"It's bad tonight and I'm not asking you to fix it. Just stay on the phone.\"" },
+      { t: 30, label: "Press call before you edit it", body: "Editing is how this gets abandoned." },
+      { t: 120, label: "Say where you are", body: "Location first, feelings second. It's the part that matters if this goes wrong." }],
+    tags: { mag: ["7–8", "9–10"], time: ["Ten minutes", "Thirty minutes", "As long as it takes"], emotion: ["Shame", "Grief", "Emptiness", "Loneliness"], place: ["Home alone", "Outdoors alone"] } },
+  { id: "night", name: "Cut The Night Short", framework: "Behavioural — sleep as endpoint",
+    frameworkNote: "Late-night relapse is overwhelmingly a function of hours awake and alone. Ending the day early is a legitimate intervention, not a retreat.",
+    why: "You're exhausted with the whole night ahead of you and no reason to still be awake. Nothing good is coming at 2am. Ending the day is a win, not a surrender.",
+    does: "Closes the window rather than defending it.",
+    duration: "20 minutes", steps: [
+      { t: 60, label: "Phone on the far side of the room", body: "Charging, screen down, out of arm's reach." },
+      { t: 90, label: "Shower as hot as you can stand", body: "Then let yourself get cold. The temperature drop is what makes you sleepy." },
+      { t: 120, label: "Bed, lights off, something spoken", body: "Podcast or audiobook, volume low, timer on. Something you've heard before." }],
+    tags: { mag: ["1–3", "4–6"], time: ["Thirty minutes", "As long as it takes"], body: ["Exhausted", "Numb"], place: ["Home alone", "Outdoors alone"] } }
+];
+
+const RULE_BLOCK = { "Talking to a person": ["call"], "Outdoor or sport activities": ["leave"], "Anything over ten minutes": ["delay", "night", "surf"] };
+
+class Component extends DCLogic {
+  state = {
+    screen: "welcome", stepIndex: 0, profile: { subs: [], triggers: [], worked: [], ruledOut: [], treatment: [] },
+    answers: {}, qIndex: 0, instId: null, rejected: [], runStep: 0, remaining: 0, frameworkOpen: false,
+    recheck: null, matchTick: 0, locationSent: false,
+    harmChecked: [], fromShelf: false,
+    scores: { tipp: [4, 5], surf: [7, 9], tape: [3, 6], leave: [2, 5], ground: [5, 6], delay: [6, 8], call: [2, 3], night: [1, 4] },
+    history: [
+      { when: "Aug 21", name: "Urge Surfing", detail: "9/10 · home alone · anxiety", outcome: "Success", ok: true },
+      { when: "Aug 19", name: "The Fifteen-Minute Deal", detail: "6/10 · work · boredom", outcome: "Success", ok: true },
+      { when: "Aug 16", name: "One Call, Script Written", detail: "8/10 · home alone · shame", outcome: "Success", ok: true },
+      { when: "Aug 14", name: "Play The Tape Forward", detail: "7/10 · old bar · anticipation", outcome: "Failure", ok: false },
+      { when: "Aug 14", name: "Harm reduction", detail: "Naloxone out · told someone · didn't use alone", outcome: "Relapse", ok: "relapse" }
+    ]
+  };
+
+  componentWillUnmount() { clearInterval(this._t); clearInterval(this._m); }
+
+  set(patch) { this.setState(patch); }
+
+  pickInstrument(exclude) {
+    const a = this.state.answers, ruled = this.state.profile.ruledOut || [];
+    const blocked = {};
+    ruled.forEach(r => (RULE_BLOCK[r] || []).forEach(id => blocked[id] = true));
+    let best = null, bestScore = -1;
+    INSTRUMENTS.forEach(inst => {
+      if (blocked[inst.id] || (exclude || []).indexOf(inst.id) >= 0) return;
+      let s = 0; const t = inst.tags;
+      ["place", "mag", "emotion", "body", "time"].forEach(k => {
+        if (t[k] && a[k] && t[k].indexOf(a[k]) >= 0) s += k === "mag" || k === "time" ? 3 : 2;
+      });
+      const sc = this.state.scores[inst.id] || [0, 0];
+      s += sc[1] ? (sc[0] / sc[1]) * 1.5 : 0;
+      if (s > bestScore) { bestScore = s; best = inst; }
+    });
+    return (best || INSTRUMENTS[0]).id;
+  }
+
+  runMatch() {
+    clearInterval(this._m);
+    this.setState({ screen: "matching", matchTick: 0 });
+    this._m = setInterval(() => {
+      const n = this.state.matchTick + 1;
+      if (n > 2) { clearInterval(this._m); this.setState({ screen: "instrument", instId: this.pickInstrument(this.state.rejected), frameworkOpen: false }); }
+      else this.setState({ matchTick: n });
+    }, 620);
+  }
+
+  tick() {
+    clearInterval(this._t);
+    this._t = setInterval(() => {
+      const r = this.state.remaining - 1;
+      if (r <= 0) { clearInterval(this._t); this.setState({ remaining: 0 }); }
+      else this.setState({ remaining: r });
+    }, 1000);
+  }
+
+  qs() {
+    const d = this.props.sosDepth || "Five questions";
+    if (d === "Straight to an instrument") return [];
+    if (d === "Three questions") return [QUESTIONS[0], QUESTIONS[1], QUESTIONS[4]];
+    return QUESTIONS;
+  }
+
+  currentInst() { return INSTRUMENTS.filter(i => i.id === this.state.instId)[0] || INSTRUMENTS[0]; }
+
+  clock(sec) { const m = Math.floor(sec / 60), s = sec % 60; return m + ":" + (s < 10 ? "0" : "") + s; }
+
+  toggle(key, value) {
+    const p = Object.assign({}, this.state.profile);
+    const list = (p[key] || []).slice();
+    const i = list.indexOf(value);
+    if (i >= 0) list.splice(i, 1); else list.push(value);
+    p[key] = list; this.setState({ profile: p });
+  }
+
+  renderVals() {
+    const s = this.state, inst = this.currentInst(), a = s.answers;
+    const step = PROFILE_STEPS[s.stepIndex] || PROFILE_STEPS[0];
+    const qList = this.qs();
+    const q = qList[s.qIndex] || QUESTIONS[0];
+    const recheckOn = s.recheck === null ? this.props.recheckDefault !== false : s.recheck;
+    const runStep = inst.steps[Math.min(s.runStep, inst.steps.length - 1)];
+    const ranked = INSTRUMENTS.map(i => {
+      const sc = s.scores[i.id] || [0, 0];
+      return { i: i, rate: sc[1] ? sc[0] / sc[1] : 0, sc: sc };
+    }).filter(r => r.sc[1] > 0).sort((x, y) => y.rate - x.rate || y.sc[1] - x.sc[1]).slice(0, 5);
+
+    const HARM = [
+      { label: "For opioids: make sure naloxone is at arm's length", sub: "Not in a drawer. Not in a bag. Within sight." },
+      { label: "Ensure someone is nearby and you are in reach of help", sub: "Most overdoses are survivable with a witness." },
+      { label: "Take nothing on top of it", sub: "No benzos, no alcohol, no second thing." },
+      { label: "Test it, then take a quarter first", sub: "Tolerance is gone after a break. Wait ten minutes." },
+      { label: "Stay hydrated and put something in your stomach", sub: "If it's alcohol: one glass of water between each." },
+      { label: "Make sure one person knows where you are", sub: "Give them the actual address, not just 'out tonight'." }
+    ];
+
+    const readbackBits = [];
+    if (a.place) readbackBits.push(a.place.toLowerCase());
+    if (a.mag) readbackBits.push("at " + a.mag);
+    if (a.emotion) readbackBits.push(a.emotion.toLowerCase() + " underneath");
+    if (a.time) readbackBits.push(a.time.toLowerCase() + " to work with");
+
+    return {
+      frameDark: s.screen === "welcome" || s.screen === "question" || s.screen === "matching" || s.screen === "run" || s.screen === "after" || s.screen === "harm",
+      isWelcome: true, isProfile: true, isHome: true,
+      isQuestion: true, isMatching: true, isInstrument: true,
+      isRun: true, isAfter: true, isHeld: true, isHarm: true,
+      isHistory: true, isProfileView: true,
+
+      step: {
+        counter: "Step " + (s.stepIndex + 1) + " of " + PROFILE_STEPS.length,
+        kicker: step.kicker, title: step.title, hint: step.hint, note: step.note, hasNote: !!step.note,
+        cta: s.stepIndex === PROFILE_STEPS.length - 1 ? "Done — take me in" : "Continue",
+        options: step.options.map(o => ({
+          label: o, mark: (s.profile[step.key] || []).indexOf(o) >= 0 ? "■" : "□",
+          toggle: () => this.toggle(step.key, o)
+        }))
+      },
+      nextStep: () => s.stepIndex === PROFILE_STEPS.length - 1 ? this.set({ screen: "home" }) : this.set({ stepIndex: s.stepIndex + 1 }),
+      startProfile: () => this.set({ screen: "profile", stepIndex: 0 }),
+      goHome: () => { clearInterval(this._t); clearInterval(this._m); this.set({ screen: "home" }); },
+      openHistory: () => this.set({ screen: "history" }),
+      openProfileView: () => this.set({ screen: "profileView" }),
+      openHarm: () => this.set({ screen: "harm" }),
+      registerLabel: this.props.registerLabel || "SET UP MY PROFILE",
+      showFootnote: this.props.showFrameworkFootnote !== false,
+      startSOS: () => {
+        this.setState({ qIndex: 0, answers: {}, rejected: [], fromShelf: false }, () => {
+          if (!this.qs().length) this.runMatch(); else this.set({ screen: "question" });
+        });
+      },
+
+      q: {
+        counter: "Question " + (s.qIndex + 1) + " / " + qList.length, title: q.title,
+        options: q.options.map(o => ({
+          label: o.label, sub: o.sub,
+          pick: () => {
+            const na = Object.assign({}, s.answers); na[q.key] = o.label;
+            if (s.qIndex === qList.length - 1) { this.setState({ answers: na }, () => this.runMatch()); }
+            else this.setState({ answers: na, qIndex: s.qIndex + 1 });
+          }
+        }))
+      },
+      back: () => s.qIndex === 0 ? this.set({ screen: "home" }) : this.set({ qIndex: s.qIndex - 1 }),
+      matchLine: ["Reading your answers…", "Filtering what you ruled out…", "One instrument fits."][s.matchTick] || "One instrument fits.",
+
+      inst: {
+        kicker: s.fromShelf ? "From your levers" : "Your instrument",
+        name: inst.name, framework: inst.framework + " ↗", frameworkNote: inst.frameworkNote,
+        why: inst.why, does: inst.does, duration: inst.duration,
+        stepCount: inst.steps.length + " steps",
+        cta: "Start — " + inst.duration
+      },
+      readback: readbackBits.length ? "You're " + readbackBits.join(", ") + "." : "Pulled from what has held for you before.",
+      frameworkOpen: s.frameworkOpen,
+      toggleFramework: () => this.set({ frameworkOpen: !s.frameworkOpen }),
+      swapInstrument: () => {
+        const rej = s.rejected.concat([inst.id]);
+        this.setState({ rejected: rej, instId: this.pickInstrument(rej), frameworkOpen: false });
+      },
+      startRun: () => { this.setState({ screen: "run", runStep: 0, remaining: inst.steps[0].t }, () => this.tick()); },
+
+      run: {
+        counter: "Step " + (s.runStep + 1) + " of " + inst.steps.length,
+        pct: Math.round(((s.runStep + 1) / inst.steps.length) * 100) + "%",
+        clock: this.clock(s.remaining), label: runStep.label, body: runStep.body,
+        cta: s.runStep === inst.steps.length - 1 ? "Finished" : "Next step"
+      },
+      nextRunStep: () => {
+        if (s.runStep === inst.steps.length - 1) { clearInterval(this._t); this.set({ screen: "after" }); }
+        else this.setState({ runStep: s.runStep + 1, remaining: inst.steps[s.runStep + 1].t }, () => this.tick());
+      },
+      bail: () => { clearInterval(this._t); this.set({ screen: "after" }); },
+
+      itHeld: () => {
+        const sc = Object.assign({}, s.scores), cur = (sc[inst.id] || [0, 0]).slice();
+        sc[inst.id] = [cur[0] + 1, cur[1] + 1];
+        const h = [{ when: "Today", name: inst.name, detail: (a.mag || "—") + " · " + (a.place || "—").toLowerCase() + " · " + (a.emotion || "—").toLowerCase(), outcome: "Success", ok: true }].concat(s.history);
+        this.setState({ scores: sc, history: h, screen: "held" });
+      },
+      itFailed: () => {
+        const sc = Object.assign({}, s.scores), cur = (sc[inst.id] || [0, 0]).slice();
+        sc[inst.id] = [cur[0], cur[1] + 1];
+        const h = [{ when: "Today", name: inst.name, detail: (a.mag || "—") + " · " + (a.place || "—").toLowerCase() + " · retried", outcome: "Failure", ok: false }].concat(s.history);
+        this.setState({ scores: sc, history: h, screen: "home" });
+      },
+      heldLine: "\"" + inst.name + "\" moved up your levers. It has now worked " + ((s.scores[inst.id] || [0, 0])[0]) + " times out of " + ((s.scores[inst.id] || [0, 0])[1]) + ".",
+      recheckMark: recheckOn ? "■" : "□",
+      toggleRecheck: () => this.set({ recheck: !recheckOn }),
+
+      harmItems: HARM.map((h, i) => ({
+        label: h.label, sub: h.sub, mark: s.harmChecked.indexOf(i) >= 0 ? "■" : "□",
+        toggle: () => {
+          const l = s.harmChecked.slice(), at = l.indexOf(i);
+          if (at >= 0) l.splice(at, 1); else l.push(i);
+          this.setState({ harmChecked: l });
+        }
+      })),
+      locationCta: s.locationSent ? "Location shared ✓" : "Share my location",
+      sendLocation: () => this.set({ locationSent: true }),
+      logRelapse: () => {
+        const done = (s.harmChecked || []).length;
+        const h = [{ when: "Today", name: "Harm reduction",
+          detail: done ? done + " of 6 precautions taken" : "no precautions logged",
+          outcome: "Relapse", ok: "relapse" }].concat(s.history);
+        this.setState({ history: h, screen: "home" });
+      },
+
+      shelf: ranked.map((r, i) => ({
+        rank: "0" + (i + 1), name: r.i.name,
+        dur: "≈ " + r.i.duration, framework: r.i.framework,
+        open: () => this.setState({ instId: r.i.id, screen: "instrument", fromShelf: true, frameworkOpen: false })
+      })),
+      history: s.history.map(h => ({ when: h.when, name: h.name, detail: h.detail, outcome: h.outcome,
+        color: h.ok === "relapse" ? "#f3f2f2" : (h.ok ? "oklch(0.5 0.11 148)" : "#ec3013"),
+        bg: h.ok === "relapse" ? "#201e1d" : "transparent",
+        pad: h.ok === "relapse" ? "3px 7px 4px" : "0" })),
+      profileRows: [
+        { label: "The substance", value: (s.profile.subs || []).join(", ") || "Not set" },
+        { label: "The trigger", value: (s.profile.triggers || []).join(", ") || "Not set" },
+        { label: "What works for you", value: (s.profile.worked || []).join(", ") || "Not set" },
+        { label: "Never suggest this", value: (s.profile.ruledOut || []).join(", ") || "Nothing ruled out" },
+        { label: "Medication and health", value: (s.profile.treatment || []).join(", ") || "Not set" }
+      ]
+    };
+  }
+}
+
+</script>
+</body>
+</html>
