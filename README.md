@@ -42,6 +42,7 @@ src/
   App.jsx            screen router inside the iOS device frame
   components/         IOSDevice frame, Logo, Hoverable
   screens/            one component per screen (welcome, profile, home, SOS, …)
+                        Question.jsx renders both option lists and 0–10 sliders
 design/                the original Claude Design handoff — chat transcripts and the
                         HTML/CSS/JS prototype this app was built from. Not part of the
                         shipped app; kept for provenance and future design iteration.
@@ -76,13 +77,22 @@ Set once during onboarding (`PROFILE_STEPS` in `data.js`, six screens), re-edita
 
 ### SOS Answers (session-only)
 
-Re-collected every time the HELP! flow runs, one value per dimension, from the five `QUESTIONS` in `data.js`. Each value is the selected option's `id`, not its display label:
+Re-collected every time the HELP! flow runs, one value per dimension, from the thirteen `QUESTIONS` in `data.js`:
 
 ```js
-{ place, mag, emotion, body, time }
+{ place, access, mag, emotion, body, clarity, time,      // asked always
+  withdrawal, recent, stressor, satisfaction, hopeless, shame }  // asked if there's time
 ```
 
-`mag` is self-reported intensity ("How loud is it?", 1–3 through 9–10) and `time` is how long the person has right now. Deliberately not persisted — a crisis session is about tonight, not a history of every past crisis.
+Option questions store the selected option's `id`. Slider questions (`mag`, `satisfaction`, `hopeless`) store a raw `0–10` **number** — it reads better in the log — and matching resolves it through `bandFor()` into a coarse band id (`mag_low` / `mag_mid` / `mag_high` / `mag_max`, and equivalents), so instruments tag ranges rather than enumerating eleven values.
+
+Deliberately not persisted — a crisis session is about tonight, not a history of every past crisis.
+
+**The time question is a branch point.** Q7 asks how much time the person has to do something about this. Answering with one of `FAST_PATH_TIME` (`no_time`, `two_min`) ends the questionnaire immediately and goes straight to matching, with a note on the Matching screen that time is the constraint. Everything before Q7 is therefore the highest-value matching signal by design — it's what someone in acute crisis actually answers. The six questions after it add resolution for people who have the capacity to give it. Unanswered questions simply contribute nothing to the score; they never penalise.
+
+**Hopelessness has a floor.** A `hopeless` answer of `HOPELESS_FLAG_AT` (8) or above routes through a `hopelessFlag` screen before the instrument, pointing the person at a doctor, a crisis line, or someone they trust. Collecting that number and responding only with a breathing exercise would be worse than never asking. The copy is deliberately country-neutral; **country-specific crisis lines are not yet wired in and should be added before any real launch.**
+
+**Withdrawal is a matching signal, not a medical gate.** `withdrawal` asks about physical/psychological symptoms broadly and feeds scoring like any other tag. Note for future work: severe *alcohol or benzodiazepine* withdrawal can be medically dangerous, and the app currently has no warning path for it.
 
 ### Instrument / Lever
 
@@ -130,15 +140,19 @@ Three outcome kinds: **Success** / **Failure** (from an SOS run) and **Relapse**
 
 ## Lever choice mechanic
 
-`pickInstrument` in `src/useLever.js` runs every time the HELP! flow resolves (after the fifth SOS question) or "Give me a different one" is tapped. It scores every non-excluded instrument and returns the winner. Four tiers, in order of how much they can move the outcome:
+`pickInstrument` in `src/useLever.js` runs every time the HELP! flow resolves (at the time branch on a fast-path run, or after the last question otherwise) or "Give me a different one" is tapped. It scores every non-excluded instrument and returns the winner. Four tiers, in order of how much they can move the outcome:
 
 **Tier 1 — Hard filter (veto).** `profile.ruledOut` → `RULE_BLOCK` removes matching instruments from candidacy before scoring starts. Absolute: a ruled-out instrument can never be picked, no matter its score.
 
-**Tier 2 — Situational match (dominant signal).** For each of tonight's five SOS answers, if the instrument's `tags` for that dimension include the answer:
-- `mag` or `time` match → **+3**
-- `place`, `emotion`, or `body` match → **+2**
+**Tier 2 — Situational match (dominant signal).** For each of tonight's answers, if the instrument's `tags` for that dimension include the answer (slider answers matched via their band), it scores by weight:
 
-Intensity and available time are weighted 1.5× higher than context — the algorithm treats "how bad is it and how long do you have" as the dominant question, everything else as secondary.
+| Weight | Dimensions | Why |
+|---|---|---|
+| **+3** | `mag`, `time`, `clarity` | These constrain what is even *possible*: how bad it is, how long you have, and whether you can still reason at all. `clarity` sits here because it gates whole classes of instrument — a thought record is useless to someone who can't hold a thought |
+| **+2** | `access`, `place`, `emotion`, `body`, `withdrawal`, `shame` | Strong context. `access` changes whether stimulus-control tactics apply at all; `shame` targets the abstinence-violation-effect instruments specifically |
+| **+1** | `recent`, `stressor`, `satisfaction`, `hopeless` | Colouring. Real signal, but shouldn't outvote what's happening in the next ten minutes |
+
+Weights live in `ANSWER_WEIGHT` in `useLever.js`. Questions left unanswered on a fast-path run contribute **0** — they never subtract, so a short run is a lower-resolution match rather than a penalised one.
 
 **Tier 3 — Structural affinity (small, capped — plus one larger, flatter exception).** Overlap between `profile.triggers` and the instrument's `triggerTags` → **+1 per match, capped at +2**. Overlap between `profile.subs` and `substanceRelevance` → **+1, capped at +1** (currently always 0 — see the Data model gap above). Overlap between `profile.style` and the instrument's `styleTags` → **flat +2** if any tag matches — bigger than the trigger/substance bonuses because it's *stated* preference ("I reach for X when it's bad") rather than a pattern inferred from a trigger word, but still just one addend among several, never large enough on its own to overturn a strong Tier 2 situational match.
 
@@ -148,7 +162,7 @@ Intensity and available time are weighted 1.5× higher than context — the algo
 
 **Seeding.** When profile creation finishes, for every instrument whose `worksForKey` matches a selected `profile.worked` answer — and that doesn't already have real attempts logged — `Scores[id]` is seeded to `[1, 2]` (a 50% prior). This is why the shelf isn't cold on day one for someone who just told the app what's worked before; real outcomes dilute the seed fast.
 
-**Selection.** Highest total score wins among survivors. "Give me a different one" adds the current pick to a session-only `rejected` list and reruns the same scoring against the same five answers, minus that option — it cascades to the next-best fit rather than re-triaging from scratch.
+**Selection.** Highest total score wins among survivors. "Give me a different one" adds the current pick to a session-only `rejected` list and reruns the same scoring against the same answers, minus that option — it cascades to the next-best fit rather than re-triaging from scratch.
 
 ## Levers library
 
@@ -508,6 +522,7 @@ The app can report anonymous, aggregate usage to [Umami](https://umami.is) — a
 
 - Screen views (which of the 12 screens is showing)
 - Navigation taps: profile setup started/skipped/completed, SOS started, harm-reduction screen opened, language toggled, "clear all data" used
+- Triage shape: whether a run took the fast path, and whether the hopelessness floor was hit — in both cases the bare fact, never the answer or the score behind it
 - Which instrument got matched, swapped to, opened from the shelf, started, held, or failed
 
 **What's never tracked**, in line with the app's "your profile stays on this phone" promise: any profile or SOS answer value (substance, trigger, place, magnitude, emotion, body sensation, time available), the harm-reduction precaution checklist, shared location/coordinates, or any identifier that could tie events to a person or a specific crisis. See `src/analytics.js` and the `track(...)` call sites in `src/useLever.js` for the exhaustive list — there is no event beyond what's described above.
