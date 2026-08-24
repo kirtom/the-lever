@@ -73,7 +73,7 @@ export function Home({ derived, actions }) {
       </div>
 
       <div style={{ flex: 1 }} />
-      <div style={{ padding: '12px 22px 30px', display: 'flex', gap: 18, fontSize: 11, fontWeight: 800, letterSpacing: '.1em', textTransform: 'uppercase', color: '#605d5d' }}>
+      <div style={{ padding: '12px 22px 30px', display: 'flex', justifyContent: 'space-between', fontSize: 11, fontWeight: 800, letterSpacing: '.1em', textTransform: 'uppercase', color: '#605d5d' }}>
         <Hoverable as="span" onClick={actions.openProfileView} style={{ cursor: 'pointer' }} hoverStyle={{ color: '#ec3013' }}>
           Profile
         </Hoverable>
