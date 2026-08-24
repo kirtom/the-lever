@@ -2,7 +2,7 @@
 
 **The Lever** is a crisis-intervention companion for addiction recovery. No sobriety counters, no meeting finder, no sponsor contact list — just a fast path from "I need it now" to a matched coping technique: a five-question forced-choice triage, an instrument picked against your profile and what's actually held for you before, a timed step-by-step run, and an outcome check-in that either reinforces what worked or falls back to a harm-reduction screen.
 
-This repo is a React/Vite single-page app that emulates the mobile experience inside an iOS device frame, for showcasing the product.
+This repo is a React/Vite single-page app that emulates the mobile experience inside an iOS device frame, for showcasing the product. The app is bilingual (English / Russian, EN by default, toggle on the Welcome screen).
 
 **Live:** https://kirtom.github.io/the-lever/ (custom domain `thelever.help` planned)
 
@@ -34,7 +34,8 @@ npm run preview  # preview the production build
 
 ```
 src/
-  data.js           instrument library, profile-step and SOS-question definitions
+  data.js           instrument library, profile-step and SOS-question definitions (bilingual, id-keyed)
+  i18n.js            screen-chrome UI strings, EN/RU
   useLever.js        state machine + recommendation logic (matching, scoring, timers)
   App.jsx            screen router inside the iOS device frame
   components/         IOSDevice frame, Logo, Hoverable
@@ -48,9 +49,15 @@ design/                the original Claude Design handoff — chat transcripts a
 
 Everything the app knows lives in five entities, defined in `src/data.js` and held together by the `useLever` hook (`src/useLever.js`): Profile, SOS Answers, the Instrument/Lever library, Scores, and History. Three of the five — Profile, Scores, and History — persist to `localStorage` under a single key, `the-lever:v1`. SOS Answers are session-only by design (a crisis session is about tonight, not a history of every past crisis); the Instrument library itself is static content defined in source, not user state at all.
 
+### Language
+
+The app is bilingual (English / Russian). Every selectable option and every piece of instrument content is content-addressed by a stable, language-independent `id` — `PROFILE_STEPS` and `QUESTIONS` options are `{ id, en, ru }`; `INSTRUMENTS` text fields (`name`, `framework`, `frameworkNote`, `why`, `does`, `duration`, `steps[].label`, `steps[].body`) are `{ en, ru }` pairs keyed off the instrument's own `id`. All internal cross-references — `RULE_BLOCK` keys, `triggerTags`, `styleTags`, `worksForKey`, and `tags{}` values — are `id`s, never display text, so the matching algorithm in [Lever choice mechanic](#lever-choice-mechanic) runs identically regardless of language. Screen chrome (buttons, headings, static copy) lives separately in `src/i18n.js`, exported as `UI.en` / `UI.ru` and namespaced per screen.
+
+Current language is `lang: 'en' | 'ru'`, defaulting to `'en'`, toggled via the EN/RU switch on the Welcome screen only, and persisted to `localStorage` alongside Profile/Scores/History. Every `derived.*` field used by the screens is resolved to the current language at render time — including History entries, which store language-independent shape (`instId` + answer `id`s, or `isHarm` + a precaution count) rather than pre-rendered strings, so switching languages never leaves old log entries frozen in the other one. A legacy fallback renders any pre-i18n log entry (stored with plain `name`/`detail` strings) as-is.
+
 ### Profile (persisted)
 
-Set once during onboarding (`PROFILE_STEPS` in `data.js`, six screens), re-editable any time from "Your profile" → "Redo profile creation." Shape:
+Set once during onboarding (`PROFILE_STEPS` in `data.js`, six screens), re-editable any time from "Your profile" → "Redo profile creation." Shape — each array holds option `id`s, not display text:
 
 ```js
 { subs: [], triggers: [], worked: [], style: [], ruledOut: [], treatment: [] }
@@ -67,7 +74,7 @@ Set once during onboarding (`PROFILE_STEPS` in `data.js`, six screens), re-edita
 
 ### SOS Answers (session-only)
 
-Re-collected every time the HELP! flow runs, one value per dimension, from the five `QUESTIONS` in `data.js`:
+Re-collected every time the HELP! flow runs, one value per dimension, from the five `QUESTIONS` in `data.js`. Each value is the selected option's `id`, not its display label:
 
 ```js
 { place, mag, emotion, body, time }
@@ -82,22 +89,22 @@ The core content entity — one object per row in `INSTRUMENTS` (`data.js`):
 | Field | Type | Purpose |
 |---|---|---|
 | `id` | string | Stable slug, used everywhere else as a foreign key (`worksForKey`, `RULE_BLOCK` values, `Scores` keys) |
-| `name` | string | Display name on the Instrument and shelf screens |
-| `framework` | string | Shown under the name; the source technique/tradition |
-| `frameworkNote` | string | Expandable footnote — the fuller provenance explanation |
-| `why` / `does` | string | "Why this one" / "What it does" copy on the Instrument screen |
-| `duration` | string | Display string ("90 seconds", "4 minutes") — should sum to the `steps[].t` total |
-| `steps` | `{ t, label, body }[]` | Drives the timed Run screen; `t` is seconds, counted down live |
-| `tags` | `{ place[], mag[], emotion[], body[], time[] }` | Situational matching against tonight's SOS Answers — Tier 2 |
-| `triggerTags` | string[] | Matches `profile.triggers` — Tier 3 |
-| `styleTags` | string[] | Matches `profile.style` — Tier 3, larger flat bonus. Every instrument carries exactly one today |
-| `worksForKey` | string \| null | The one `profile.worked` option this instrument represents, if any |
-| `substanceRelevance` | string[] | Matches `profile.subs` — Tier 3. Empty on every instrument today; see the gap noted above |
+| `name` | `{ en, ru }` | Display name on the Instrument and shelf screens |
+| `framework` | `{ en, ru }` | Shown under the name; the source technique/tradition |
+| `frameworkNote` | `{ en, ru }` | Expandable footnote — the fuller provenance explanation |
+| `why` / `does` | `{ en, ru }` | "Why this one" / "What it does" copy on the Instrument screen |
+| `duration` | `{ en, ru }` | Display string ("90 seconds", "4 minutes") — should sum to the `steps[].t` total |
+| `steps` | `{ t, label: {en,ru}, body: {en,ru} }[]` | Drives the timed Run screen; `t` is seconds, counted down live |
+| `tags` | `{ place[], mag[], emotion[], body[], time[] }` | Situational matching against tonight's SOS Answers — Tier 2. Values are `QUESTIONS` option `id`s |
+| `triggerTags` | string[] | Matches `profile.triggers` — Tier 3. Values are `triggers` option `id`s |
+| `styleTags` | string[] | Matches `profile.style` — Tier 3, larger flat bonus. Values are `style` option `id`s. Every instrument carries exactly one today |
+| `worksForKey` | string \| null | The `id` of the one `profile.worked` option this instrument represents, if any |
+| `substanceRelevance` | string[] | Matches `profile.subs` — Tier 3. Values are `subs` option `id`s. Empty on every instrument today; see the gap noted above |
 | `originOrg` | string | Who/what this is sourced from |
 | `evidenceTier` | `'established'` \| `'emerging'` | `'established'` = clinically-trialed modality; `'emerging'` = philosophy-sourced or newer-research, honestly, even where it inspired real clinical technique |
 | `reviewStatus` | string | Currently `'drafted'` on every instrument — none of this content has had an actual clinical review pass |
 
-`RULE_BLOCK` is the hard-filter map: `{ [ruledOutOptionLabel]: [instrumentId, ...] }`. Selecting that option in profile step 5 removes those instruments from candidacy entirely, no matter how well they'd otherwise score.
+All `{ en, ru }` fields resolve to a plain string at render time via `derived.ui`/`derived.inst` in `useLever.js`, keyed off the current `lang`. `RULE_BLOCK` is the hard-filter map: `{ [ruledOutOptionId]: [instrumentId, ...] }`. Selecting that option in profile step 5 removes those instruments from candidacy entirely, no matter how well they'd otherwise score.
 
 ### Scores (persisted, "the learned tier")
 
@@ -109,7 +116,15 @@ Written by exactly two things: the `worked`-seeding step at profile completion (
 
 ### History (persisted, "the private log")
 
-An array of `{ when, name, detail, outcome, ok }` entries, newest first, shown on the "Private log" screen. Three outcome kinds: **Success** / **Failure** (from an SOS run) and **Relapse** (from the harm-reduction screen's "Log tonight as a relapse"), rendered as a visually distinct ink chip rather than a third value on the same success/failure scale. Starts empty — no seeded demo data.
+An array of entries, newest first, shown on the "Private log" screen. Stored language-independent, then resolved to display text (`name`, `detail`, `outcome`) at render time using the current `lang`:
+
+```js
+{ when: 'today', instId, mag, place, emotion, ok: true }              // held
+{ when: 'today', instId, mag, place, retried: true, ok: false }       // failed
+{ when: 'today', isHarm: true, precautionsCount, ok: 'relapse' }      // harm-reduction log
+```
+
+Three outcome kinds: **Success** / **Failure** (from an SOS run) and **Relapse** (from the harm-reduction screen's "Log tonight as a relapse"), rendered as a visually distinct ink chip rather than a third value on the same success/failure scale. Starts empty — no seeded demo data.
 
 ## Lever choice mechanic
 

@@ -1,16 +1,47 @@
 import { Hoverable } from '../components/Hoverable';
 import { Logo } from '../components/Logo';
 
-const denials = ['No sobriety counter.', 'No meetings search.', 'No sponsor calls.', 'No savings calculator.'];
-
 export function Welcome({ derived, actions }) {
+  const w = derived.ui.welcome;
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', background: '#201e1d', color: '#f3f2f2', padding: '96px 24px 52px' }}>
       <div>
+        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
+          <div style={{ display: 'flex', border: '1px solid rgba(243,242,242,.35)' }}>
+            <div
+              onClick={derived.lang === 'ru' ? actions.toggleLang : undefined}
+              style={{
+                padding: '5px 10px',
+                fontSize: 11,
+                fontWeight: 800,
+                letterSpacing: '.06em',
+                cursor: derived.lang === 'ru' ? 'pointer' : 'default',
+                background: derived.lang === 'en' ? '#ec3013' : 'transparent',
+                color: derived.lang === 'en' ? '#fff' : 'rgba(243,242,242,.55)',
+              }}
+            >
+              EN
+            </div>
+            <div
+              onClick={derived.lang === 'en' ? actions.toggleLang : undefined}
+              style={{
+                padding: '5px 10px',
+                fontSize: 11,
+                fontWeight: 800,
+                letterSpacing: '.06em',
+                cursor: derived.lang === 'en' ? 'pointer' : 'default',
+                background: derived.lang === 'ru' ? '#ec3013' : 'transparent',
+                color: derived.lang === 'ru' ? '#fff' : 'rgba(243,242,242,.55)',
+              }}
+            >
+              RU
+            </div>
+          </div>
+        </div>
         <Logo width={330} height={140} style={{ margin: '0 auto' }} />
         <div style={{ height: 2, background: '#ec3013', margin: '24px 0 20px', width: '100%' }} />
         <ul style={{ listStyle: 'none', margin: '0 0 34px', padding: 0, display: 'flex', flexDirection: 'column', gap: 8, maxWidth: 340 }}>
-          {denials.map((line) => (
+          {w.denials.map((line) => (
             <li key={line} style={{ fontSize: 16, lineHeight: 1.4, color: 'rgba(243,242,242,.72)', display: 'grid', gridTemplateColumns: '14px 1fr', gap: 10, alignItems: 'baseline' }}>
               <span style={{ color: '#ec3013', fontWeight: 800 }}>—</span>
               <span>{line}</span>
@@ -19,12 +50,14 @@ export function Welcome({ derived, actions }) {
         </ul>
         <p style={{ fontSize: 17, lineHeight: 1.45, margin: 0, color: '#f3f2f2', maxWidth: 340, textWrap: 'balance' }}>
           <span style={{ display: 'block', fontWeight: 800 }}>
-            One button. <br />
-            Five questions. <br />
-            Five honest answers.
+            {w.leadLine1} <br />
+            {w.leadLine2} <br />
+            {w.leadLine3}
           </span>
           <span style={{ display: 'block', marginTop: 6 }}>
-            This app will hand you <strong style={{ color: '#ec3013', fontWeight: 800 }}>the lever</strong> that can move things you can't shift by hand.
+            {w.taglineBefore}
+            <strong style={{ color: '#ec3013', fontWeight: 800 }}>{w.leverWord}</strong>
+            {w.taglineAfter}
           </span>
         </p>
       </div>
@@ -66,12 +99,12 @@ export function Welcome({ derived, actions }) {
           }}
           hoverStyle={{ background: '#f3f2f2', color: '#161514', borderColor: '#f3f2f2' }}
         >
-          <span>SKIP IT! I NEED HELP NOW!</span>
+          <span>{w.skip}</span>
           <span>→</span>
         </Hoverable>
         <p style={{ fontSize: 13, lineHeight: 1.45, margin: '6px 0 0', color: 'rgba(243,242,242,.5)', maxWidth: 340 }}>
-          No account, no email, no password. <br />
-          Your profile stays on this phone.
+          {w.noteLine1} <br />
+          {w.noteLine2}
         </p>
       </div>
     </div>

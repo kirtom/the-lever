@@ -1,12 +1,13 @@
 import { Hoverable } from '../components/Hoverable';
 
 export function Harm({ derived, actions }) {
+  const hm = derived.ui.harm;
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#161514', color: '#f3f2f2', padding: '62px 22px 30px' }}>
-      <div style={{ fontSize: 11, letterSpacing: '.12em', textTransform: 'uppercase', fontWeight: 800, color: '#ec3013' }}>Harm reduction</div>
+      <div style={{ fontSize: 11, letterSpacing: '.12em', textTransform: 'uppercase', fontWeight: 800, color: '#ec3013' }}>{hm.kicker}</div>
       <div style={{ height: 2, background: '#ec3013', margin: '8px 0 14px' }} />
-      <h2 style={{ fontSize: 30, lineHeight: 1.02, letterSpacing: '-.03em', margin: '0 0 8px', maxWidth: 320 }}>Harm reduction strategy</h2>
-      <p style={{ fontSize: 15, lineHeight: 1.5, color: 'rgba(243,242,242,.6)', margin: '0 0 12px' }}>The goal is no longer to stop. It is to stay alive and not be alone. Work down the list.</p>
+      <h2 style={{ fontSize: 30, lineHeight: 1.02, letterSpacing: '-.03em', margin: '0 0 8px', maxWidth: 320 }}>{hm.title}</h2>
+      <p style={{ fontSize: 15, lineHeight: 1.5, color: 'rgba(243,242,242,.6)', margin: '0 0 12px' }}>{hm.body}</p>
       <div style={{ display: 'flex', flexDirection: 'column' }}>
         {derived.harmItems.map((item, i) => (
           <div key={i} onClick={item.toggle} style={{ display: 'flex', gap: 12, alignItems: 'flex-start', padding: '10px 0', borderTop: '1px solid rgba(243,242,242,.2)', cursor: 'pointer' }}>
@@ -26,7 +27,7 @@ export function Harm({ derived, actions }) {
           hoverStyle={{ borderColor: '#ec3013' }}
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span>Back to finding a solution</span>
+            <span>{hm.back}</span>
             <span>→</span>
           </div>
         </Hoverable>
@@ -47,7 +48,7 @@ export function Harm({ derived, actions }) {
           hoverStyle={{ background: '#2d2b2b' }}
         >
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <span>Log a relapse</span>
+            <span>{hm.logRelapse}</span>
             <span>→</span>
           </div>
         </Hoverable>

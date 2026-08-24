@@ -2,12 +2,13 @@ import { Hoverable } from '../components/Hoverable';
 
 export function Instrument({ derived, actions }) {
   const { inst } = derived;
+  const ii = derived.ui.instrument;
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#f3f2f2', padding: '74px 22px 40px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, letterSpacing: '.1em', textTransform: 'uppercase', fontWeight: 800, color: '#ec3013' }}>
         <span>{inst.kicker}</span>
         <span onClick={actions.goHome} style={{ cursor: 'pointer', color: '#9b9797' }}>
-          Close
+          {ii.close}
         </span>
       </div>
       <div style={{ height: 2, background: '#201e1d', margin: '10px 0 18px' }} />
@@ -21,10 +22,10 @@ export function Instrument({ derived, actions }) {
       {derived.frameworkOpen && (
         <div style={{ background: '#eae7e7', borderLeft: '2px solid #ec3013', padding: '12px 14px', fontSize: 13, lineHeight: 1.5, color: '#444141', marginTop: 12 }}>{inst.frameworkNote}</div>
       )}
-      <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '.1em', textTransform: 'uppercase', margin: '22px 0 8px' }}>Why this one</div>
+      <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '.1em', textTransform: 'uppercase', margin: '22px 0 8px' }}>{ii.whyThisOne}</div>
       <p style={{ fontSize: 15, lineHeight: 1.5, margin: '0 0 6px', color: '#201e1d' }}>{derived.readback}</p>
       <p style={{ fontSize: 15, lineHeight: 1.5, margin: 0, color: '#605d5d' }}>{inst.why}</p>
-      <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '.1em', textTransform: 'uppercase', margin: '22px 0 8px' }}>What it does</div>
+      <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '.1em', textTransform: 'uppercase', margin: '22px 0 8px' }}>{ii.whatItDoes}</div>
       <p style={{ fontSize: 15, lineHeight: 1.5, margin: 0, color: '#605d5d' }}>{inst.does}</p>
       <div style={{ height: 2, background: '#201e1d', margin: '22px 0 12px' }} />
       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, color: '#605d5d' }}>
@@ -46,7 +47,7 @@ export function Instrument({ derived, actions }) {
           style={{ border: '2px solid #201e1d', padding: '14px 20px', fontWeight: 800, fontSize: 14, cursor: 'pointer' }}
           hoverStyle={{ background: '#eae7e7' }}
         >
-          Give me a different one
+          {ii.different}
         </Hoverable>
       </div>
     </div>
