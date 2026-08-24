@@ -24,7 +24,7 @@ export function Welcome({ derived, actions }) {
             Five honest answers.
           </span>
           <span style={{ display: 'block', marginTop: 6 }}>
-            This app will hand you <strong style={{ color: '#ec3013', fontWeight: 800 }}>the lever</strong> that moves the thing you can't shift by hand.
+            This app will hand you <strong style={{ color: '#ec3013', fontWeight: 800 }}>the lever</strong> that can move things you can't shift by hand.
           </span>
         </p>
       </div>
@@ -66,7 +66,7 @@ export function Welcome({ derived, actions }) {
           }}
           hoverStyle={{ background: '#f3f2f2', color: '#161514', borderColor: '#f3f2f2' }}
         >
-          <span>SKIP IT. I NEED IT NOW!</span>
+          <span>SKIP IT! I NEED HELP NOW!</span>
           <span>→</span>
         </Hoverable>
         <p style={{ fontSize: 13, lineHeight: 1.45, margin: '6px 0 0', color: 'rgba(243,242,242,.5)', maxWidth: 340 }}>

@@ -58,7 +58,7 @@ export const PROFILE_STEPS = [
     title: 'What are you on, and what are you dealing with?',
     hint: 'This tells us which techniques are safe for you.',
     key: 'treatment',
-    options: ['Suboxone or methadone', 'Naltrexone', 'Antidepressants', 'In therapy', 'Anxiety treatment', 'ADHD', 'Trauma', 'Insomnia'],
+    options: ['Suboxone or methadone', 'Naltrexone', 'Antidepressants', 'In therapy', 'Anxiety treatment', 'ADHD', 'Trauma', 'Insomnia', 'No treatment / No health condition'],
   },
 ];
 

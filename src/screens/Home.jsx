@@ -52,7 +52,7 @@ export function Home({ derived, actions }) {
         </div>
         <div style={{ height: 2, background: '#201e1d', margin: '10px 0 0' }} />
         {derived.shelf.length === 0 && (
-          <p style={{ fontSize: 12, lineHeight: 1.4, color: '#9b9797', margin: '14px 0 0' }}>Nothing here yet. Run an instrument once and it starts filling in.</p>
+          <p style={{ fontSize: 12, lineHeight: 1.4, color: '#9b9797', margin: '14px 0 0' }}>Nothing here yet. Your most effective levers will be shown here for quick access.</p>
         )}
         {derived.shelf.map((row) => (
           <Hoverable
@@ -73,12 +73,12 @@ export function Home({ derived, actions }) {
       </div>
 
       <div style={{ flex: 1 }} />
-      <div style={{ padding: '12px 22px 30px', display: 'flex', gap: 18, fontSize: 11, fontWeight: 800, letterSpacing: '.1em', textTransform: 'uppercase', color: '#605d5d' }}>
+      <div style={{ padding: '12px 22px 30px', display: 'flex', justifyContent: 'space-between', fontSize: 11, fontWeight: 800, letterSpacing: '.1em', textTransform: 'uppercase', color: '#605d5d' }}>
         <Hoverable as="span" onClick={actions.openProfileView} style={{ cursor: 'pointer' }} hoverStyle={{ color: '#ec3013' }}>
           Profile
         </Hoverable>
         <Hoverable as="span" onClick={actions.openHarm} style={{ cursor: 'pointer' }} hoverStyle={{ color: '#ec3013' }}>
-          Harm reduction
+          Log a relapse
         </Hoverable>
       </div>
     </div>
