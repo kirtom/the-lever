@@ -102,9 +102,24 @@ export const PROFILE_STEPS = [
   },
 ];
 
+// Slider answers are stored as a raw 0–10 number (it reads better in the log
+// and is more useful downstream), but matching works on bands so instruments
+// can keep tagging coarse ranges instead of enumerating eleven values.
+export function bandFor(question, value) {
+  if (!question || question.type !== 'slider') return value;
+  const band = (question.bands || []).find((b) => value <= b.max);
+  return band ? band.id : null;
+}
+
+// Answering Q7 with one of these ends the questionnaire early and goes
+// straight to matching — someone with two minutes should not be asked six
+// more questions.
+export const FAST_PATH_TIME = ['no_time', 'two_min'];
+
 export const QUESTIONS = [
   {
     key: 'place',
+    type: 'options',
     title: { en: 'Where are you right now?', ru: 'Где ты сейчас?' },
     options: [
       { id: 'home_alone', en: 'Home alone', ru: 'Дома один', sub: { en: '', ru: '' } },
@@ -117,18 +132,39 @@ export const QUESTIONS = [
     ],
   },
   {
-    key: 'mag',
-    title: { en: 'How loud is it?', ru: 'Насколько сильно накрыло?' },
+    key: 'access',
+    type: 'options',
+    title: { en: 'Is the drug within reach right now?', ru: 'Вещество сейчас под рукой?' },
     options: [
-      { id: 'mag_low', en: '1–3', ru: '1–3', sub: { en: 'background noise', ru: 'фоновый шум' } },
-      { id: 'mag_mid', en: '4–6', ru: '4–6', sub: { en: 'distracting', ru: 'мешает думать' } },
-      { id: 'mag_high', en: '7–8', ru: '7–8', sub: { en: 'hard to think', ru: 'трудно соображать' } },
-      { id: 'mag_max', en: '9–10', ru: '9–10', sub: { en: 'madness', ru: 'полный ад' } },
+      { id: 'in_hand', en: "It's in my hand", ru: 'Оно у меня в руках', sub: { en: '', ru: '' } },
+      { id: 'in_room', en: "It's in this room", ru: 'Здесь, в этой комнате', sub: { en: '', ru: '' } },
+      { id: 'in_building', en: 'Somewhere where I live', ru: 'Где-то дома', sub: { en: '', ru: '' } },
+      { id: 'short_trip', en: "I'd have to go out for it", ru: 'Пришлось бы выйти за ним', sub: { en: '', ru: '' } },
+      { id: 'out_of_reach', en: 'Nowhere near me', ru: 'Далеко, не достать', sub: { en: '', ru: '' } },
+    ],
+  },
+  {
+    key: 'mag',
+    type: 'slider',
+    title: { en: 'How intense is the craving?', ru: 'Насколько сильная тяга?' },
+    min: 0,
+    max: 10,
+    initial: 5,
+    scale: {
+      low: { en: 'Barely there', ru: 'Едва заметна' },
+      high: { en: 'Unbearable', ru: 'Невыносимо' },
+    },
+    bands: [
+      { id: 'mag_low', max: 3 },
+      { id: 'mag_mid', max: 6 },
+      { id: 'mag_high', max: 8 },
+      { id: 'mag_max', max: 10 },
     ],
   },
   {
     key: 'emotion',
-    title: { en: 'Which emotion is strongest right now?', ru: 'Какая эмоция сейчас сильнее всего?' },
+    type: 'options',
+    title: { en: 'Which emotion is hardest to control right now?', ru: 'Какую эмоцию сейчас труднее всего удержать?' },
     options: [
       { id: 'anxiety', en: 'Anxiety', ru: 'Тревога', sub: { en: '', ru: '' } },
       { id: 'anger_e', en: 'Anger', ru: 'Злость', sub: { en: '', ru: '' } },
@@ -145,6 +181,7 @@ export const QUESTIONS = [
   },
   {
     key: 'body',
+    type: 'options',
     title: { en: 'How does your body feel right now?', ru: 'Что сейчас с телом?' },
     options: [
       { id: 'wired', en: 'Wired', ru: 'На нервах', sub: { en: '', ru: '' } },
@@ -160,17 +197,113 @@ export const QUESTIONS = [
     ],
   },
   {
-    key: 'time',
-    title: { en: 'How long have you got?', ru: 'Сколько у тебя есть времени?' },
+    key: 'clarity',
+    type: 'options',
+    title: { en: 'Can you still think straight?', ru: 'Соображать ещё получается?' },
     options: [
-      { id: 'two_min', en: 'Two minutes', ru: 'Две минуты', sub: { en: '', ru: '' } },
+      { id: 'clear', en: 'Clear enough', ru: 'Более-менее ясно', sub: { en: 'I can follow a plan', ru: 'план удержу' } },
+      { id: 'foggy', en: 'Foggy', ru: 'Туман в голове', sub: { en: 'slow, but working', ru: 'медленно, но работает' } },
+      { id: 'no_thoughts', en: "Can't hold a thought", ru: 'Мысль не держится', sub: { en: 'nothing sticks', ru: 'ничего не цепляется' } },
+    ],
+  },
+  {
+    key: 'time',
+    type: 'options',
+    title: { en: 'How much time do you have right now to do something about this?', ru: 'Сколько сейчас есть времени, чтобы с этим что-то сделать?' },
+    options: [
+      { id: 'no_time', en: "Almost none — it's happening now", ru: 'Почти нисколько — прямо сейчас', sub: { en: '', ru: '' } },
+      { id: 'two_min', en: 'A couple of minutes', ru: 'Пара минут', sub: { en: '', ru: '' } },
       { id: 'five_min', en: 'Five minutes', ru: 'Пять минут', sub: { en: '', ru: '' } },
       { id: 'ten_min', en: 'Ten minutes', ru: 'Десять минут', sub: { en: '', ru: '' } },
       { id: 'thirty_min', en: 'Thirty minutes', ru: 'Полчаса', sub: { en: '', ru: '' } },
       { id: 'as_long', en: 'As long as it takes', ru: 'Сколько понадобится', sub: { en: '', ru: '' } },
     ],
   },
+  {
+    key: 'withdrawal',
+    type: 'options',
+    title: { en: 'Any withdrawal symptoms right now — physical or psychological?', ru: 'Есть сейчас симптомы отмены — телесные или психические?' },
+    options: [
+      { id: 'wd_none', en: 'None', ru: 'Нет', sub: { en: '', ru: '' } },
+      { id: 'wd_physical', en: 'Physical', ru: 'Телесные', sub: { en: 'sweats, shakes, sick', ru: 'пот, тремор, мутит' } },
+      { id: 'wd_psych', en: 'Psychological', ru: 'Психические', sub: { en: 'agitation, dread, no sleep', ru: 'тревога, ужас, не спится' } },
+      { id: 'wd_both', en: 'Both', ru: 'И то, и другое', sub: { en: '', ru: '' } },
+    ],
+  },
+  {
+    key: 'recent',
+    type: 'options',
+    title: { en: 'Did something in the last two hours set this off?', ru: 'Что-то за последние два часа это запустило?' },
+    options: [
+      { id: 'rc_person', en: 'A person', ru: 'Человек', sub: { en: '', ru: '' } },
+      { id: 'rc_argument', en: 'An argument', ru: 'Ссора', sub: { en: '', ru: '' } },
+      { id: 'rc_place', en: 'A place or something I saw', ru: 'Место или что-то увиденное', sub: { en: '', ru: '' } },
+      { id: 'rc_news', en: 'Bad news', ru: 'Плохие новости', sub: { en: '', ru: '' } },
+      { id: 'rc_nothing', en: 'Nothing — it just came', ru: 'Ничего — просто накатило', sub: { en: '', ru: '' } },
+    ],
+  },
+  {
+    key: 'stressor',
+    type: 'options',
+    title: { en: 'Are you dealing with a major life stressor right now?', ru: 'Сейчас в жизни есть крупный стресс?' },
+    options: [
+      { id: 'st_yes', en: 'Yes', ru: 'Да', sub: { en: 'job, money, housing, health, someone I lost', ru: 'работа, деньги, жильё, здоровье, потеря' } },
+      { id: 'st_some', en: 'Sort of', ru: 'Отчасти', sub: { en: 'nothing acute, but it is heavy', ru: 'ничего острого, но тяжело' } },
+      { id: 'st_no', en: 'No', ru: 'Нет', sub: { en: '', ru: '' } },
+    ],
+  },
+  {
+    key: 'satisfaction',
+    type: 'slider',
+    title: { en: 'Overall, how is life going right now?', ru: 'Если в целом — как сейчас жизнь?' },
+    min: 0,
+    max: 10,
+    initial: 5,
+    emojis: ['😞', '😕', '😐', '🙂', '😀'],
+    scale: {
+      low: { en: 'Nothing good in it', ru: 'Ничего хорошего' },
+      high: { en: 'Genuinely good', ru: 'По-настоящему хорошо' },
+    },
+    bands: [
+      { id: 'sat_low', max: 3 },
+      { id: 'sat_mid', max: 6 },
+      { id: 'sat_high', max: 10 },
+    ],
+  },
+  {
+    key: 'hopeless',
+    type: 'slider',
+    title: { en: 'How hopeless do you feel about recovery actually working?', ru: 'Насколько безнадёжным кажется, что выздоровление вообще сработает?' },
+    min: 0,
+    max: 10,
+    initial: 5,
+    scale: {
+      low: { en: 'It can work', ru: 'Может сработать' },
+      high: { en: "It won't", ru: 'Не сработает' },
+    },
+    bands: [
+      { id: 'hope_low', max: 3 },
+      { id: 'hope_mid', max: 6 },
+      { id: 'hope_high', max: 10 },
+    ],
+  },
+  {
+    key: 'shame',
+    type: 'options',
+    title: { en: 'Any shame or self-loathing about having this craving?', ru: 'Есть стыд или отвращение к себе из-за самой тяги?' },
+    options: [
+      { id: 'sh_yes', en: 'Yes, heavily', ru: 'Да, сильно', sub: { en: '', ru: '' } },
+      { id: 'sh_some', en: 'A little', ru: 'Немного', sub: { en: '', ru: '' } },
+      { id: 'sh_no', en: 'No', ru: 'Нет', sub: { en: '', ru: '' } },
+    ],
+  },
 ];
+
+// A hopelessness answer this high gets a country-neutral pointer to real
+// help before the instrument — collecting the number and doing nothing with
+// it would be worse than not asking. Country-specific crisis lines can be
+// added later; see README "SOS triage".
+export const HOPELESS_FLAG_AT = 8;
 
 export const INSTRUMENTS = [
   {
@@ -216,6 +349,9 @@ export const INSTRUMENTS = [
       time: ['two_min', 'five_min'],
       body: ['wired', 'shaky', 'racing', 'sweating', 'tense'],
       place: ['home_alone', 'outdoors_alone', 'public', 'work'],
+      clarity: ['no_thoughts', 'foggy'],
+      withdrawal: ['wd_physical', 'wd_both'],
+      shame: ['sh_no'],
     },
   },
   {
@@ -266,6 +402,13 @@ export const INSTRUMENTS = [
       time: ['ten_min', 'thirty_min'],
       emotion: ['anxiety', 'anticipation', 'boredom_e', 'restlessness'],
       place: ['home_alone', 'home_others'],
+      clarity: ['foggy', 'clear'],
+      access: ['short_trip', 'out_of_reach'],
+      withdrawal: ['wd_psych'],
+      recent: ['rc_nothing'],
+      stressor: ['st_some'],
+      satisfaction: ['sat_mid'],
+      hopeless: ['hope_low'],
     },
   },
   {
@@ -316,6 +459,12 @@ export const INSTRUMENTS = [
       time: ['five_min', 'ten_min'],
       emotion: ['anticipation', 'boredom_e', 'emptiness', 'guilt'],
       place: ['used_here', 'home_alone'],
+      clarity: ['clear'],
+      access: ['in_building', 'short_trip'],
+      withdrawal: ['wd_none'],
+      stressor: ['st_no'],
+      satisfaction: ['sat_high'],
+      hopeless: ['hope_low'],
     },
   },
   {
@@ -360,6 +509,10 @@ export const INSTRUMENTS = [
       mag: ['mag_high', 'mag_max'],
       time: ['two_min', 'five_min', 'ten_min'],
       place: ['used_here', 'public'],
+      clarity: ['no_thoughts', 'foggy'],
+      access: ['in_hand', 'in_room', 'in_building'],
+      recent: ['rc_place'],
+      shame: ['sh_no'],
     },
   },
   {
@@ -411,6 +564,9 @@ export const INSTRUMENTS = [
       place: ['public', 'work'],
       emotion: ['anxiety', 'shame', 'fear'],
       body: ['wired', 'shaky', 'nauseous', 'tense'],
+      clarity: ['no_thoughts', 'foggy'],
+      withdrawal: ['wd_physical'],
+      recent: ['rc_person', 'rc_argument'],
     },
   },
   {
@@ -456,6 +612,11 @@ export const INSTRUMENTS = [
       time: ['thirty_min', 'as_long'],
       emotion: ['boredom_e', 'emptiness'],
       body: ['numb', 'exhausted', 'pain_b'],
+      clarity: ['no_thoughts', 'foggy'],
+      access: ['in_hand', 'in_room', 'in_building'],
+      withdrawal: ['wd_psych'],
+      recent: ['rc_nothing'],
+      shame: ['sh_no'],
     },
   },
   {
@@ -501,6 +662,9 @@ export const INSTRUMENTS = [
       time: ['ten_min', 'thirty_min', 'as_long'],
       emotion: ['shame', 'grief', 'emptiness', 'loneliness_e'],
       place: ['home_alone', 'outdoors_alone'],
+      clarity: ['foggy', 'clear'],
+      access: ['in_hand', 'in_room', 'in_building'],
+      recent: ['rc_person'],
     },
   },
   {
@@ -546,6 +710,9 @@ export const INSTRUMENTS = [
       time: ['thirty_min', 'as_long'],
       body: ['exhausted', 'numb'],
       place: ['home_alone', 'outdoors_alone'],
+      clarity: ['no_thoughts', 'foggy'],
+      access: ['in_room', 'in_building'],
+      withdrawal: ['wd_physical'],
     },
   },
   {
@@ -596,6 +763,13 @@ export const INSTRUMENTS = [
       time: ['two_min'],
       body: ['wired', 'racing'],
       place: ['home_alone', 'public', 'work', 'outdoors_alone'],
+      clarity: ['no_thoughts', 'foggy'],
+      access: ['in_hand', 'in_room'],
+      recent: ['rc_place'],
+      stressor: ['st_no'],
+      satisfaction: ['sat_high'],
+      hopeless: ['hope_low'],
+      shame: ['sh_no'],
     },
   },
   {
@@ -641,6 +815,7 @@ export const INSTRUMENTS = [
       time: ['five_min', 'ten_min'],
       emotion: ['boredom_e', 'restlessness'],
       place: ['home_alone', 'home_others', 'work'],
+      clarity: ['no_thoughts', 'foggy'],
     },
   },
   {
@@ -692,6 +867,11 @@ export const INSTRUMENTS = [
       emotion: ['emptiness', 'boredom_e'],
       body: ['numb', 'exhausted'],
       place: ['home_alone', 'home_others'],
+      clarity: ['no_thoughts', 'foggy'],
+      withdrawal: ['wd_physical', 'wd_both'],
+      recent: ['rc_person', 'rc_argument', 'rc_news'],
+      stressor: ['st_yes'],
+      shame: ['sh_some'],
     },
   },
   {
@@ -741,6 +921,13 @@ export const INSTRUMENTS = [
       mag: ['mag_mid', 'mag_high'],
       time: ['ten_min', 'thirty_min'],
       emotion: ['grief', 'anger_e', 'shame'],
+      clarity: ['clear'],
+      withdrawal: ['wd_psych'],
+      recent: ['rc_news'],
+      stressor: ['st_yes'],
+      satisfaction: ['sat_mid'],
+      hopeless: ['hope_mid'],
+      shame: ['sh_yes'],
     },
   },
   {
@@ -785,6 +972,11 @@ export const INSTRUMENTS = [
       mag: ['mag_mid', 'mag_high'],
       time: ['five_min', 'ten_min'],
       emotion: ['anticipation', 'boredom_e'],
+      clarity: ['clear'],
+      withdrawal: ['wd_none'],
+      stressor: ['st_no'],
+      satisfaction: ['sat_high'],
+      hopeless: ['hope_low'],
     },
   },
   {
@@ -834,6 +1026,9 @@ export const INSTRUMENTS = [
       emotion: ['anger_e', 'shame', 'guilt'],
       mag: ['mag_mid', 'mag_high'],
       time: ['ten_min'],
+      clarity: ['clear'],
+      withdrawal: ['wd_none'],
+      shame: ['sh_yes'],
     },
   },
   {
@@ -888,6 +1083,10 @@ export const INSTRUMENTS = [
       place: ['work', 'public'],
       mag: ['mag_mid', 'mag_high'],
       time: ['two_min', 'five_min'],
+      clarity: ['foggy', 'clear'],
+      withdrawal: ['wd_psych'],
+      recent: ['rc_nothing'],
+      stressor: ['st_some'],
     },
   },
   {
@@ -937,6 +1136,9 @@ export const INSTRUMENTS = [
       body: ['numb', 'tense', 'exhausted'],
       place: ['home_alone', 'home_others'],
       time: ['five_min', 'ten_min'],
+      clarity: ['no_thoughts', 'foggy'],
+      withdrawal: ['wd_physical', 'wd_both'],
+      recent: ['rc_nothing'],
     },
   },
   {
@@ -986,6 +1188,9 @@ export const INSTRUMENTS = [
       emotion: ['shame', 'guilt', 'fear'],
       time: ['five_min', 'ten_min'],
       mag: ['mag_mid'],
+      clarity: ['clear'],
+      withdrawal: ['wd_none'],
+      shame: ['sh_yes'],
     },
   },
   {
@@ -1030,6 +1235,13 @@ export const INSTRUMENTS = [
       place: ['public', 'work'],
       time: ['two_min', 'five_min'],
       mag: ['mag_mid', 'mag_high'],
+      clarity: ['foggy', 'clear'],
+      access: ['in_room', 'in_building', 'short_trip'],
+      recent: ['rc_place'],
+      stressor: ['st_no'],
+      satisfaction: ['sat_high'],
+      hopeless: ['hope_low'],
+      shame: ['sh_no'],
     },
   },
   {
@@ -1079,6 +1291,13 @@ export const INSTRUMENTS = [
       emotion: ['anticipation', 'anxiety'],
       mag: ['mag_mid', 'mag_high'],
       time: ['five_min'],
+      clarity: ['foggy', 'clear'],
+      withdrawal: ['wd_psych'],
+      recent: ['rc_argument'],
+      stressor: ['st_some'],
+      satisfaction: ['sat_mid'],
+      hopeless: ['hope_mid'],
+      shame: ['sh_yes'],
     },
   },
   {
@@ -1128,6 +1347,13 @@ export const INSTRUMENTS = [
       emotion: ['emptiness', 'grief'],
       time: ['ten_min', 'thirty_min'],
       mag: ['mag_mid'],
+      clarity: ['clear'],
+      withdrawal: ['wd_none'],
+      recent: ['rc_person'],
+      stressor: ['st_yes'],
+      satisfaction: ['sat_low'],
+      hopeless: ['hope_high'],
+      shame: ['sh_some'],
     },
   },
   {
@@ -1177,6 +1403,13 @@ export const INSTRUMENTS = [
       emotion: ['anger_e', 'fear', 'anxiety'],
       mag: ['mag_mid', 'mag_high'],
       time: ['five_min'],
+      clarity: ['clear'],
+      withdrawal: ['wd_none'],
+      recent: ['rc_person', 'rc_argument', 'rc_news'],
+      stressor: ['st_yes'],
+      satisfaction: ['sat_mid'],
+      hopeless: ['hope_mid'],
+      shame: ['sh_some'],
     },
   },
   {
@@ -1226,6 +1459,13 @@ export const INSTRUMENTS = [
       emotion: ['emptiness', 'grief', 'boredom_e'],
       time: ['five_min', 'ten_min'],
       mag: ['mag_mid'],
+      clarity: ['clear'],
+      withdrawal: ['wd_none'],
+      recent: ['rc_news'],
+      stressor: ['st_yes'],
+      satisfaction: ['sat_low'],
+      hopeless: ['hope_high'],
+      shame: ['sh_yes'],
     },
   },
   {
@@ -1275,6 +1515,11 @@ export const INSTRUMENTS = [
       emotion: ['shame', 'guilt'],
       mag: ['mag_mid', 'mag_high'],
       time: ['five_min'],
+      clarity: ['clear'],
+      withdrawal: ['wd_none'],
+      satisfaction: ['sat_low'],
+      hopeless: ['hope_high'],
+      shame: ['sh_yes'],
     },
   },
   {
@@ -1319,6 +1564,9 @@ export const INSTRUMENTS = [
       emotion: ['guilt', 'shame'],
       time: ['two_min', 'five_min'],
       mag: ['mag_mid', 'mag_high'],
+      clarity: ['clear'],
+      hopeless: ['hope_high'],
+      shame: ['sh_yes'],
     },
   },
   {
@@ -1368,6 +1616,13 @@ export const INSTRUMENTS = [
       place: ['home_alone', 'public', 'work'],
       time: ['five_min', 'ten_min'],
       mag: ['mag_mid'],
+      clarity: ['foggy', 'clear'],
+      access: ['in_room', 'in_building'],
+      recent: ['rc_place', 'rc_nothing'],
+      stressor: ['st_no'],
+      satisfaction: ['sat_high'],
+      hopeless: ['hope_low'],
+      shame: ['sh_no'],
     },
   },
   {
@@ -1417,6 +1672,11 @@ export const INSTRUMENTS = [
       emotion: ['loneliness_e', 'shame'],
       time: ['five_min', 'ten_min'],
       mag: ['mag_mid'],
+      clarity: ['foggy', 'clear'],
+      stressor: ['st_some'],
+      satisfaction: ['sat_low'],
+      hopeless: ['hope_mid'],
+      shame: ['sh_yes'],
     },
   },
   {
@@ -1466,6 +1726,12 @@ export const INSTRUMENTS = [
       emotion: ['boredom_e', 'emptiness'],
       body: ['numb', 'exhausted'],
       time: ['two_min', 'five_min'],
+      clarity: ['foggy', 'clear'],
+      withdrawal: ['wd_psych'],
+      recent: ['rc_news'],
+      stressor: ['st_yes'],
+      satisfaction: ['sat_low'],
+      hopeless: ['hope_mid'],
     },
   },
   {
@@ -1515,6 +1781,9 @@ export const INSTRUMENTS = [
       body: ['tense', 'wired', 'shaky'],
       place: ['home_alone', 'home_others'],
       time: ['five_min', 'ten_min'],
+      clarity: ['no_thoughts', 'foggy'],
+      withdrawal: ['wd_physical', 'wd_both'],
+      recent: ['rc_argument'],
     },
   },
   {
@@ -1564,6 +1833,12 @@ export const INSTRUMENTS = [
       emotion: ['anticipation', 'guilt'],
       time: ['five_min', 'ten_min'],
       mag: ['mag_mid'],
+      clarity: ['clear'],
+      access: ['short_trip', 'out_of_reach'],
+      withdrawal: ['wd_none'],
+      stressor: ['st_yes'],
+      satisfaction: ['sat_low'],
+      hopeless: ['hope_high'],
     },
   },
   {
@@ -1608,6 +1883,11 @@ export const INSTRUMENTS = [
       emotion: ['shame', 'grief', 'emptiness'],
       time: ['two_min', 'five_min'],
       mag: ['mag_high', 'mag_max'],
+      clarity: ['foggy', 'clear'],
+      stressor: ['st_yes'],
+      satisfaction: ['sat_low'],
+      hopeless: ['hope_high'],
+      shame: ['sh_yes'],
     },
   },
   {
@@ -1652,6 +1932,9 @@ export const INSTRUMENTS = [
       mag: ['mag_high', 'mag_max'],
       time: ['two_min'],
       emotion: ['anticipation'],
+      clarity: ['foggy', 'clear'],
+      access: ['in_hand', 'in_room'],
+      withdrawal: ['wd_psych'],
     },
   },
 ];

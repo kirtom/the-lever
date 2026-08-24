@@ -12,6 +12,7 @@ import { Held } from './screens/Held';
 import { Harm } from './screens/Harm';
 import { History } from './screens/History';
 import { ProfileView } from './screens/ProfileView';
+import { HopelessFlag } from './screens/HopelessFlag';
 
 const SCREENS = {
   welcome: Welcome,
@@ -26,6 +27,7 @@ const SCREENS = {
   harm: Harm,
   history: History,
   profileView: ProfileView,
+  hopelessFlag: HopelessFlag,
 };
 
 export default function App() {

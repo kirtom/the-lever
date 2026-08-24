@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { HARM_ITEMS, INSTRUMENTS, PROFILE_STEPS, QUESTIONS, RULE_BLOCK } from './data';
+import { bandFor, FAST_PATH_TIME, HARM_ITEMS, HOPELESS_FLAG_AT, INSTRUMENTS, PROFILE_STEPS, QUESTIONS, RULE_BLOCK } from './data';
 import { UI } from './i18n';
 import { track } from './analytics';
 
@@ -34,8 +34,25 @@ function findProfileOption(stepKey, id) {
 
 function findQuestionOption(qKey, id) {
   const q = QUESTIONS.find((qq) => qq.key === qKey);
-  return q?.options.find((o) => o.id === id);
+  return q?.options?.find((o) => o.id === id);
 }
+
+// Answers are stored per question key: an option id for option questions, a
+// raw 0–10 number for sliders. Matching always compares band/option ids, so
+// slider values are resolved through bandFor first.
+function matchValue(qKey, answer) {
+  if (answer == null) return null;
+  const q = QUESTIONS.find((qq) => qq.key === qKey);
+  return q?.type === 'slider' ? bandFor(q, answer) : answer;
+}
+
+const MATCH_KEYS = QUESTIONS.map((q) => q.key);
+
+// Tonight's answers are the dominant signal, but they shouldn't all shout at
+// the same volume: intensity and available time constrain what is even
+// possible, clarity gates whole classes of instrument, and the rest colour
+// the choice.
+const ANSWER_WEIGHT = { mag: 3, time: 3, clarity: 3, access: 2, body: 2, emotion: 2, place: 2, withdrawal: 2, shame: 2, recent: 1, stressor: 1, satisfaction: 1, hopeless: 1 };
 
 export function useLever() {
   const stored = useMemo(loadStored, []);
@@ -53,6 +70,8 @@ export function useLever() {
   const [frameworkOpen, setFrameworkOpen] = useState(false);
   const [matchTick, setMatchTick] = useState(0);
   const [harmChecked, setHarmChecked] = useState([]);
+  const [fastPath, setFastPath] = useState(false);
+  const [pendingAnswers, setPendingAnswers] = useState(null);
   const [fromShelf, setFromShelf] = useState(false);
   const [coords, setCoords] = useState(null);
   const [shareState, setShareState] = useState('idle');
@@ -163,9 +182,12 @@ export function useLever() {
         if (blocked[inst.id] || (exclude || []).indexOf(inst.id) >= 0) return;
         let s = 0;
         const tags = inst.tags;
-        // Tier 2 — situational: tonight's five answers. Dominant signal.
-        ['place', 'mag', 'emotion', 'body', 'time'].forEach((k) => {
-          if (tags[k] && ans[k] && tags[k].indexOf(ans[k]) >= 0) s += k === 'mag' || k === 'time' ? 3 : 2;
+        // Tier 2 — situational: tonight's answers. Dominant signal. Questions
+        // after the time branch may be unanswered on a fast-path run; those
+        // simply contribute nothing rather than penalising anyone.
+        MATCH_KEYS.forEach((k) => {
+          const v = matchValue(k, ans[k]);
+          if (tags[k] && v && tags[k].indexOf(v) >= 0) s += ANSWER_WEIGHT[k] || 1;
         });
         // Tier 3 — structural affinity: background profile pattern. Capped low so
         // it nudges rather than competes with tonight's situational answers.
@@ -238,6 +260,8 @@ export function useLever() {
     setAnswers({});
     setRejected([]);
     setFromShelf(false);
+    setFastPath(false);
+    setPendingAnswers(null);
     setScreen('question');
   }, []);
 
@@ -245,7 +269,26 @@ export function useLever() {
     (key, id) => {
       const next = { ...answers, [key]: id };
       setAnswers(next);
+      // The time question is a branch point: someone with a couple of minutes
+      // gets matched now rather than answering six more questions.
+      if (key === 'time' && FAST_PATH_TIME.indexOf(id) >= 0) {
+        // Only the fact of the fast path — the time answer itself is an SOS
+        // answer, and those never leave the device.
+        track('sos_fast_path');
+        setFastPath(true);
+        runMatch(next);
+        return;
+      }
       if (qIndex === QUESTIONS.length - 1) {
+        // A high hopelessness score gets a pointer to real help before the
+        // technique — collecting the number and ignoring it would be worse
+        // than never asking.
+        if (typeof next.hopeless === 'number' && next.hopeless >= HOPELESS_FLAG_AT) {
+          track('hopelessness_flagged');
+          setPendingAnswers(next);
+          setScreen('hopelessFlag');
+          return;
+        }
         runMatch(next);
       } else {
         setQIndex((i) => i + 1);
@@ -253,6 +296,10 @@ export function useLever() {
     },
     [answers, qIndex, runMatch]
   );
+
+  const dismissHopelessFlag = useCallback(() => {
+    runMatch(pendingAnswers || answers);
+  }, [runMatch, pendingAnswers, answers]);
 
   const backQuestion = useCallback(() => {
     if (qIndex === 0) goHome();
@@ -448,14 +495,18 @@ export function useLever() {
 
   const readbackBits = [];
   if (answers.place) readbackBits.push(questionLabel('place', answers.place).toLowerCase());
-  if (answers.mag) readbackBits.push(t.readback.magPrefix + questionLabel('mag', answers.mag));
+  // mag is a slider now, so it reads back as the number the person chose.
+  if (typeof answers.mag === 'number') readbackBits.push(t.readback.magPrefix + answers.mag + '/10');
   if (answers.emotion) readbackBits.push(questionLabel('emotion', answers.emotion).toLowerCase() + t.readback.emotionSuffix);
-  if (answers.time) readbackBits.push(questionLabel('time', answers.time).toLowerCase() + t.readback.timeSuffix);
+  // Time is deliberately left out: the instrument's own duration is shown a
+  // few lines below, so repeating it here only costs a wrapped line — which
+  // in Russian is enough to push the screen into scrolling.
 
   const heldStats = scores[inst.id] || [0, 0];
 
   const derived = {
-    frameDark: screen === 'welcome' || screen === 'question' || screen === 'matching' || screen === 'run' || screen === 'after' || screen === 'harm',
+    frameDark:
+      screen === 'welcome' || screen === 'question' || screen === 'matching' || screen === 'run' || screen === 'after' || screen === 'harm' || screen === 'hopelessFlag',
     lang,
     ui: t,
     registerLabel: t.welcome.registerLabel,
@@ -479,8 +530,25 @@ export function useLever() {
     q: {
       counter: t.questionCounter(qIndex + 1, QUESTIONS.length),
       title: q.title[lang],
-      options: q.options.map((o) => ({ id: o.id, label: o[lang], sub: o.sub[lang], pick: () => answerQuestion(q.key, o.id) })),
+      type: q.type,
+      options: (q.options || []).map((o) => ({ id: o.id, label: o[lang], sub: o.sub[lang], pick: () => answerQuestion(q.key, o.id) })),
+      slider:
+        q.type === 'slider'
+          ? {
+              min: q.min,
+              max: q.max,
+              initial: q.initial,
+              emojis: q.emojis || null,
+              lowLabel: q.scale.low[lang],
+              highLabel: q.scale.high[lang],
+              cta: t.question.sliderCta,
+              submit: (value) => answerQuestion(q.key, value),
+            }
+          : null,
     },
+
+    fastPath,
+    hopelessFlag: { ...t.hopelessFlag, dismiss: dismissHopelessFlag },
 
     matchLine: t.matching.lines[matchTick] || t.matching.lines[t.matching.lines.length - 1],
 

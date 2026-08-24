@@ -3,8 +3,8 @@ export const UI = {
     welcome: {
       denials: ['No sobriety counter.', 'No meetings search.', 'No sponsor calls.', 'No savings calculator.'],
       leadLine1: 'One button.',
-      leadLine2: 'Five questions.',
-      leadLine3: 'Five honest answers.',
+      leadLine2: 'A few questions.',
+      leadLine3: 'Honest answers.',
       taglineBefore: 'This app will hand you ',
       leverWord: 'the lever',
       taglineAfter: " that can move things you can't shift by hand.",
@@ -16,13 +16,23 @@ export const UI = {
     home: {
       log: 'Log',
       help: 'HELP!',
-      helpSubtitle: 'Five questions. One Lever.',
+      helpSubtitle: 'A few questions. One Lever.',
       yourLevers: 'Your levers',
       emptyShelf: 'Nothing here yet. Your most effective levers will be shown here for quick access.',
       profile: 'Profile',
       logRelapse: 'Log a relapse',
     },
-    question: { exit: 'Exit', back: '← Back' },
+    question: { exit: 'Exit', back: '← Back', sliderCta: 'Continue' },
+    fastPath: {
+      kicker: 'Skipping the rest',
+      line: "Time matters more than detail right now. Going straight to something you can do.",
+    },
+    hopelessFlag: {
+      kicker: 'Before the technique',
+      title: 'This is bigger than tonight',
+      body: "A craving is something this app can help with. Feeling like recovery itself won't work is something a person should hear — a doctor, a crisis line where you are, or someone you trust. Please tell one of them today.",
+      cta: 'Continue to the technique',
+    },
     matching: {
       lines: ['Reading your answers…', 'Filtering what you ruled out…', 'One instrument fits.'],
       footer: 'Reading every instrument against your profile',
@@ -87,8 +97,8 @@ export const UI = {
     welcome: {
       denials: ['Без счётчика трезвости.', 'Без поиска групп.', 'Без звонков спонсору.', 'Без калькулятора сэкономленных денег.'],
       leadLine1: 'Одна кнопка.',
-      leadLine2: 'Пять вопросов.',
-      leadLine3: 'Пять честных ответов.',
+      leadLine2: 'Несколько вопросов.',
+      leadLine3: 'Честные ответы.',
       taglineBefore: 'Это приложение даст тебе ',
       leverWord: 'рычаг',
       taglineAfter: ', который сдвинет то, что руками не сдвинуть.',
@@ -100,13 +110,23 @@ export const UI = {
     home: {
       log: 'Журнал',
       help: 'ПОМОГИ!',
-      helpSubtitle: 'Пять вопросов. Один рычаг.',
+      helpSubtitle: 'Несколько вопросов. Один рычаг.',
       yourLevers: 'Твои рычаги',
       emptyShelf: 'Пока пусто. Здесь появятся твои самые надёжные рычаги для быстрого доступа.',
       profile: 'Профиль',
       logRelapse: 'Записать срыв',
     },
-    question: { exit: 'Выход', back: '← Назад' },
+    question: { exit: 'Выход', back: '← Назад', sliderCta: 'Дальше' },
+    fastPath: {
+      kicker: 'Пропускаем остальное',
+      line: 'Сейчас время важнее подробностей. Сразу к тому, что можно сделать.',
+    },
+    hopelessFlag: {
+      kicker: 'Прежде чем начать',
+      title: 'Это больше, чем сегодняшний вечер',
+      body: 'С тягой это приложение помочь может. А вот с ощущением, что выздоровление вообще не сработает, нужно идти к человеку — к врачу, на линию помощи в твоей стране или к тому, кому доверяешь. Скажи об этом сегодня.',
+      cta: 'Перейти к технике',
+    },
     matching: {
       lines: ['Читаю твои ответы…', 'Отсеиваю то, что ты запретил…', 'Один инструмент подходит.'],
       footer: 'Сверяю каждую технику с твоим профилем',
