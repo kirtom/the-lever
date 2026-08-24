@@ -311,6 +311,29 @@ export function useLever() {
   const openHistory = useCallback(() => setScreen('history'), []);
   const openProfileView = useCallback(() => setScreen('profileView'), []);
 
+  const clearAllData = useCallback(() => {
+    clearInterval(tickTimer.current);
+    clearInterval(matchTimer.current);
+    // Profile and the learned shelf scores.
+    setProfile(EMPTY_PROFILE);
+    setScores({});
+    // The private log.
+    setHistory([]);
+    setOnboarded(false);
+    // This session's in-progress SOS state.
+    setAnswers({});
+    setQIndex(0);
+    setInstId(null);
+    setRejected([]);
+    setRunStep(0);
+    setRemaining(0);
+    setFrameworkOpen(false);
+    setMatchTick(0);
+    setFromShelf(false);
+    setStepIndex(0);
+    setScreen('welcome');
+  }, []);
+
   const fetchCoords = useCallback(() => {
     if (!navigator.geolocation) {
       setShareState('failed');
@@ -502,6 +525,7 @@ export function useLever() {
       backQuestion,
       openHistory,
       openProfileView,
+      clearAllData,
       openHarm,
       toggleFramework,
       swapInstrument,

@@ -1,6 +1,44 @@
+import { useEffect, useRef, useState } from 'react';
+import { Hoverable } from '../components/Hoverable';
+
+function ClearAllData({ onConfirm }) {
+  const [confirming, setConfirming] = useState(false);
+  const revertTimer = useRef(null);
+
+  useEffect(() => () => clearTimeout(revertTimer.current), []);
+
+  const handleClick = () => {
+    if (!confirming) {
+      setConfirming(true);
+      revertTimer.current = setTimeout(() => setConfirming(false), 4000);
+      return;
+    }
+    clearTimeout(revertTimer.current);
+    onConfirm();
+  };
+
+  return (
+    <Hoverable
+      onClick={handleClick}
+      style={{
+        border: confirming ? '2px solid #ec3013' : '2px solid rgba(32,30,29,.3)',
+        color: confirming ? '#ec3013' : '#605d5d',
+        padding: '14px 16px',
+        fontWeight: 800,
+        fontSize: 13,
+        textAlign: 'center',
+        cursor: 'pointer',
+      }}
+      hoverStyle={{ background: confirming ? '#fff2ef' : '#eae7e7' }}
+    >
+      {confirming ? "Tap again to permanently delete everything" : 'Clear all data'}
+    </Hoverable>
+  );
+}
+
 export function History({ derived, actions }) {
   return (
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#f3f2f2', padding: '74px 22px 40px' }}>
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#f3f2f2', padding: '74px 22px 30px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, letterSpacing: '.1em', textTransform: 'uppercase', fontWeight: 800 }}>
         <span>Private log</span>
         <span onClick={actions.goHome} style={{ cursor: 'pointer', color: '#9b9797' }}>
@@ -22,6 +60,8 @@ export function History({ derived, actions }) {
           </div>
         </div>
       ))}
+      <div style={{ flex: 1 }} />
+      <ClearAllData onConfirm={actions.clearAllData} />
     </div>
   );
 }
