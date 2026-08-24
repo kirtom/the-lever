@@ -126,8 +126,8 @@ export function useLever() {
       ruled.forEach((r) => (RULE_BLOCK[r] || []).forEach((id) => (blocked[id] = true)));
       const triggers = profile.triggers || [];
       const subs = profile.subs || [];
-      let best = null;
       let bestScore = -1;
+      let candidates = [];
       INSTRUMENTS.forEach((inst) => {
         if (blocked[inst.id] || (exclude || []).indexOf(inst.id) >= 0) return;
         let s = 0;
@@ -148,10 +148,25 @@ export function useLever() {
         s += sc[1] ? (sc[0] / sc[1]) * 1.5 : 0;
         if (s > bestScore) {
           bestScore = s;
-          best = inst;
+          candidates = [inst];
+        } else if (s === bestScore) {
+          candidates.push(inst);
         }
       });
-      return (best || INSTRUMENTS[0]).id;
+      if (!candidates.length) return INSTRUMENTS[0].id;
+      if (candidates.length === 1) return candidates[0].id;
+      // Tie-break: a plain "first in the array wins" rule would make every
+      // instrument added after an existing tie permanently unreachable, no
+      // matter how well it fits. Prefer the least-tried among the tied
+      // leaders instead — surfaces unexplored options — then break any
+      // remaining tie at random rather than by definition order.
+      let minAttempts = Infinity;
+      candidates.forEach((c) => {
+        const attempts = (scores[c.id] || [0, 0])[1];
+        if (attempts < minAttempts) minAttempts = attempts;
+      });
+      const leastTried = candidates.filter((c) => (scores[c.id] || [0, 0])[1] === minAttempts);
+      return leastTried[Math.floor(Math.random() * leastTried.length)].id;
     },
     [profile.ruledOut, profile.triggers, profile.subs, scores]
   );
