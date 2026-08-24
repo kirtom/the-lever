@@ -30,21 +30,25 @@ export function Home({ derived, actions }) {
           margin: '22px 22px 0',
           background: hover ? '#dd2b0f' : '#ec3013',
           color: '#fff',
-          padding: '22px 22px 20px',
+          padding: '20px 20px 18px',
           cursor: 'pointer',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center',
-          gap: 8,
+          gap: 6,
           border: '3px solid #201e1d',
+          borderRadius: 6,
           boxShadow: active ? '0 0 0 #201e1d' : hover ? '0 11px 0 #201e1d' : '0 10px 0 #201e1d',
           transform: active ? 'translateY(10px)' : hover ? 'translateY(-1px)' : 'none',
           transition: 'transform .06s, box-shadow .06s',
           userSelect: 'none',
         }}
       >
-        <div style={{ fontSize: 64, lineHeight: 0.84, fontWeight: 800, letterSpacing: '-.05em', textAlign: 'center' }}>{h.help}</div>
-        <div style={{ fontSize: 14, fontWeight: 600, opacity: 0.86, textAlign: 'center' }}>{h.helpSubtitle}</div>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, width: '100%' }}>
+          <span style={{ fontSize: 44, lineHeight: 0.9, fontWeight: 800, letterSpacing: '-.045em', textAlign: 'center' }}>{h.help}</span>
+          <span style={{ fontSize: 34, fontWeight: 800, lineHeight: 0.9 }}>→</span>
+        </div>
+        <div style={{ fontSize: 13, fontWeight: 600, opacity: 0.9, textAlign: 'center', lineHeight: 1.3 }}>{h.helpSubtitle}</div>
       </div>
 
       <div style={{ padding: '20px 22px 0' }}>

@@ -5,9 +5,9 @@ import { track } from './analytics';
 
 const STORAGE_KEY = 'the-lever:v1';
 
-const EMPTY_PROFILE = { subs: [], triggers: [], worked: [], style: [], ruledOut: [], treatment: [] };
+const EMPTY_PROFILE = { subs: [], triggers: [], worked: [], style: [], ruledOut: [], treatment: [], conditions: [] };
 
-const PROFILE_ROW_KEYS = ['subs', 'triggers', 'worked', 'style', 'ruledOut', 'treatment'];
+const PROFILE_ROW_KEYS = ['subs', 'triggers', 'worked', 'style', 'ruledOut', 'treatment', 'conditions'];
 
 function loadStored() {
   try {
@@ -132,17 +132,38 @@ export function useLever() {
     setScreen('home');
   }, []);
 
+  // "None of these" style options are exclusive: picking one clears the rest
+  // and greys them out, because "nothing yet" plus three somethings is not an
+  // answer anyone means.
   const toggleProfileOption = useCallback((key, id) => {
+    const step = PROFILE_STEPS.find((s) => s.key === key);
+    const opt = step?.options.find((o) => o.id === id);
+    const exclusiveIds = (step?.options || []).filter((o) => o.exclusive).map((o) => o.id);
     setProfile((p) => {
       const list = (p[key] || []).slice();
       const i = list.indexOf(id);
-      if (i >= 0) list.splice(i, 1);
-      else list.push(id);
-      return { ...p, [key]: list };
+      if (i >= 0) return { ...p, [key]: list.filter((x) => x !== id) };
+      if (opt?.exclusive) return { ...p, [key]: [id] };
+      // An exclusive option is selected, so the others are inactive.
+      if (list.some((x) => exclusiveIds.indexOf(x) >= 0)) return p;
+      return { ...p, [key]: list.concat([id]) };
+    });
+  }, []);
+
+  const backStep = useCallback(() => {
+    setStepIndex((i) => {
+      if (i === 0) {
+        setScreen('welcome');
+        return 0;
+      }
+      return i - 1;
     });
   }, []);
 
   const nextStep = useCallback(() => {
+    // Every step needs an answer — an empty profile teaches the matcher nothing.
+    const currentKey = PROFILE_STEPS[stepIndex].key;
+    if (!(profile[currentKey] || []).length) return;
     if (stepIndex === PROFILE_STEPS.length - 1) {
       // Seed a 50% prior for instruments the user just told us have worked
       // before, so the shelf isn't cold on day one — but never touch an
@@ -166,7 +187,7 @@ export function useLever() {
     } else {
       setStepIndex((i) => i + 1);
     }
-  }, [stepIndex, profile.worked]);
+  }, [stepIndex, profile]);
 
   const pickInstrument = useCallback(
     (exclude, ans) => {
@@ -519,12 +540,20 @@ export function useLever() {
       note: step.note?.[lang],
       hasNote: !!step.note,
       cta: stepIndex === PROFILE_STEPS.length - 1 ? t.held.done : { en: 'Continue', ru: 'Далее' }[lang],
-      options: step.options.map((o) => ({
-        id: o.id,
-        label: o[lang],
-        checked: (profile[step.key] || []).indexOf(o.id) >= 0,
-        toggle: () => toggleProfileOption(step.key, o.id),
-      })),
+      canProceed: (profile[step.key] || []).length > 0,
+      pickOne: t.profileStep.pickOne,
+      back: t.profileStep.back,
+      options: step.options.map((o) => {
+        const selected = profile[step.key] || [];
+        const exclusiveChosen = step.options.some((x) => x.exclusive && selected.indexOf(x.id) >= 0);
+        return {
+          id: o.id,
+          label: o[lang],
+          checked: selected.indexOf(o.id) >= 0,
+          disabled: exclusiveChosen && !o.exclusive,
+          toggle: () => toggleProfileOption(step.key, o.id),
+        };
+      }),
     },
 
     q: {
@@ -580,7 +609,10 @@ export function useLever() {
 
     harmItems: HARM_ITEMS.map((h, i) => ({ label: h.label[lang], sub: h.sub[lang], checked: harmChecked.indexOf(i) >= 0, toggle: () => toggleHarmItem(i) })),
     locationCta: t.location.cta[shareState] || t.location.cta.idle,
-    locationNote: coords ? t.location.pinnedPrefix + coords.la + ', ' + coords.lo : shareState === 'failed' ? t.location.unavailable : t.location.instant,
+    // Coordinates are never shown on screen — they are only carried into the
+    // share sheet. Someone in this state doesn't need to read their own
+    // latitude back, and it's one more thing on a screen that has to stay short.
+    locationNote: coords ? t.location.ready : shareState === 'failed' ? t.location.unavailable : t.location.instant,
 
     shelf: ranked.map((r, i) => ({
       rank: '0' + (i + 1),
@@ -638,6 +670,7 @@ export function useLever() {
       startProfile,
       skipToHome,
       nextStep,
+      backStep,
       startSOS,
       backQuestion,
       openHistory,
