@@ -1,0 +1,14 @@
+:root {
+  --ink: #201e1d;
+  --ink-deep: #161514;
+  --bone: #f3f2f2;
+  --accent: #ec3013;
+  --accent-hover: #dd2b0f;
+  --accent-dark: #ae1800;
+  --surface: #eae7e7;
+  --muted: #605d5d;
+  --faint: #9b9797;
+  --page-bg: #cfccc8;
+  --success: oklch(0.5 0.11 148);
+  --font: Archivo, system-ui, sans-serif;
+}
