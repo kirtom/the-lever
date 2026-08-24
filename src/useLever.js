@@ -4,7 +4,7 @@ import { HARM_ITEMS, INSTRUMENTS, PROFILE_STEPS, QUESTIONS, RULE_BLOCK } from '.
 const STORAGE_KEY = 'the-lever:v1';
 const REGISTER_LABEL = 'SET UP MY PROFILE';
 
-const EMPTY_PROFILE = { subs: [], triggers: [], worked: [], ruledOut: [], treatment: [] };
+const EMPTY_PROFILE = { subs: [], triggers: [], worked: [], style: [], ruledOut: [], treatment: [] };
 
 function loadStored() {
   try {
@@ -126,6 +126,7 @@ export function useLever() {
       ruled.forEach((r) => (RULE_BLOCK[r] || []).forEach((id) => (blocked[id] = true)));
       const triggers = profile.triggers || [];
       const subs = profile.subs || [];
+      const style = profile.style || [];
       let bestScore = -1;
       let candidates = [];
       INSTRUMENTS.forEach((inst) => {
@@ -142,6 +143,13 @@ export function useLever() {
         s += Math.min(triggerMatches, 2);
         const substanceMatches = (inst.substanceRelevance || []).filter((sub) => subs.indexOf(sub) >= 0).length;
         s += Math.min(substanceMatches, 1);
+        // Stated coping style is a stronger signal than an inferred trigger
+        // overlap — it's what the person told us they actually respond to —
+        // so it gets a flatter, larger bonus than the two above, but is still
+        // just one more addend on top of tonight's situational score, never
+        // a replacement for it.
+        const styleMatches = (inst.styleTags || []).filter((tag) => style.indexOf(tag) >= 0).length;
+        s += styleMatches > 0 ? 2 : 0;
         // Tier 4 — learned: real outcomes (and the profile.worked seed at
         // onboarding) reinforce what has actually held for this person.
         const sc = scores[inst.id] || [0, 0];
@@ -168,7 +176,7 @@ export function useLever() {
       const leastTried = candidates.filter((c) => (scores[c.id] || [0, 0])[1] === minAttempts);
       return leastTried[Math.floor(Math.random() * leastTried.length)].id;
     },
-    [profile.ruledOut, profile.triggers, profile.subs, scores]
+    [profile.ruledOut, profile.triggers, profile.subs, profile.style, scores]
   );
 
   const runMatch = useCallback(
@@ -481,6 +489,7 @@ export function useLever() {
       { label: 'The substance', value: (profile.subs || []).join(', ') || 'Not set' },
       { label: 'The trigger', value: (profile.triggers || []).join(', ') || 'Not set' },
       { label: 'What works for you', value: (profile.worked || []).join(', ') || 'Not set' },
+      { label: 'How you cope', value: (profile.style || []).join(', ') || 'Not set' },
       { label: 'Never suggest this', value: (profile.ruledOut || []).join(', ') || 'Nothing ruled out' },
       { label: 'Medication and health', value: (profile.treatment || []).join(', ') || 'Not set' },
     ],

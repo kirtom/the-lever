@@ -19,17 +19,42 @@ export const PROFILE_STEPS = [
     title: 'What has actually worked before?',
     hint: 'Even once counts.',
     key: 'worked',
-    options: ['Calling someone', 'Getting outside', 'Cold water', 'Waiting it out', 'Writing it down', 'Nothing yet'],
+    options: [
+      'Calling someone',
+      'Getting outside',
+      'Cold water',
+      'Waiting it out',
+      'Writing it down',
+      'Distracting myself on purpose',
+      "Reminding myself it'll pass",
+      'Picturing how I\'d feel later',
+      'Tensing and releasing my body',
+      'Nothing yet',
+    ],
   },
   {
-    kicker: '04 — Never suggest this',
+    kicker: '04 — How you cope',
+    title: 'When it\'s bad, what do you actually reach for?',
+    hint: "Not what's worked — just what kind of thing you'd rather try.",
+    key: 'style',
+    options: [
+      'Thinking it through',
+      'Moving my body',
+      'Reaching out to someone',
+      'Getting distracted on purpose',
+      'Sitting with it quietly',
+      'Being blunt with myself',
+    ],
+  },
+  {
+    kicker: '05 — Never suggest this',
     title: 'What should the app never hand you?',
     hint: 'This is a hard filter. It will be obeyed.',
     key: 'ruledOut',
-    options: ['Religious or spirituality talk', 'Anything over ten minutes', 'Talking to a person', 'Outdoor or sport activities', 'Tough love', 'Nothing — try me!'],
+    options: ['Religious or spirituality talk', 'Philosophy or wisdom-tradition framing', 'Anything over ten minutes', 'Talking to a person', 'Outdoor or sport activities', 'Tough love', 'Nothing — try me!'],
   },
   {
-    kicker: '05 — Medication and health',
+    kicker: '06 — Medication and health',
     title: 'What are you on, and what are you dealing with?',
     hint: 'This tells us which techniques are safe for you.',
     key: 'treatment',
@@ -111,6 +136,7 @@ export const INSTRUMENTS = [
   {
     id: 'tipp',
     triggerTags: ['Withdrawal', 'Physical pain'],
+    styleTags: ['Moving my body'],
     worksForKey: 'Cold water',
     substanceRelevance: [],
     originOrg: 'Marsha Linehan / DBT Skills Training Manual',
@@ -138,7 +164,8 @@ export const INSTRUMENTS = [
   {
     id: 'surf',
     triggerTags: ['Boredom', 'Wanting a reward'],
-    worksForKey: null,
+    styleTags: ['Sitting with it quietly'],
+    worksForKey: "Reminding myself it'll pass",
     substanceRelevance: [],
     originOrg: 'Alan Marlatt & Sarah Bowen / Mindfulness-Based Relapse Prevention',
     evidenceTier: 'established',
@@ -166,6 +193,7 @@ export const INSTRUMENTS = [
   {
     id: 'tape',
     triggerTags: ['Wanting a reward', 'Easy money'],
+    styleTags: ['Thinking it through'],
     worksForKey: null,
     substanceRelevance: [],
     originOrg: 'Standard CBT relapse-prevention (decisional balance)',
@@ -194,6 +222,7 @@ export const INSTRUMENTS = [
   {
     id: 'leave',
     triggerTags: ['Environment cues'],
+    styleTags: ['Moving my body'],
     worksForKey: 'Getting outside',
     substanceRelevance: [],
     originOrg: 'Behavioural stimulus-control literature (cue exposure)',
@@ -219,6 +248,7 @@ export const INSTRUMENTS = [
   {
     id: 'ground',
     triggerTags: ['Physical pain', 'Withdrawal'],
+    styleTags: ['Sitting with it quietly'],
     worksForKey: null,
     substanceRelevance: [],
     originOrg: 'Trauma-informed grounding practice',
@@ -247,6 +277,7 @@ export const INSTRUMENTS = [
   {
     id: 'delay',
     triggerTags: ['Boredom', 'Wanting a reward', 'Easy money'],
+    styleTags: ['Getting distracted on purpose'],
     worksForKey: 'Waiting it out',
     substanceRelevance: [],
     originOrg: 'SMART Recovery (DEADS)',
@@ -273,6 +304,7 @@ export const INSTRUMENTS = [
   {
     id: 'call',
     triggerTags: ['Loneliness'],
+    styleTags: ['Reaching out to someone'],
     worksForKey: 'Calling someone',
     substanceRelevance: [],
     originOrg: 'Peer-support / twelve-step-adjacent social support literature',
@@ -299,6 +331,7 @@ export const INSTRUMENTS = [
   {
     id: 'night',
     triggerTags: ['Tiredness'],
+    styleTags: ['Moving my body'],
     worksForKey: null,
     substanceRelevance: [],
     originOrg: 'Behavioural sleep-as-endpoint literature',
@@ -325,6 +358,7 @@ export const INSTRUMENTS = [
   {
     id: 'stop',
     triggerTags: ['Wanting a reward', 'Easy money', 'Sexual arousal'],
+    styleTags: ['Being blunt with myself'],
     worksForKey: null,
     substanceRelevance: [],
     originOrg: 'Marsha Linehan / DBT Skills Training Manual',
@@ -353,7 +387,8 @@ export const INSTRUMENTS = [
   {
     id: 'accepts',
     triggerTags: ['Boredom', 'Tiredness'],
-    worksForKey: null,
+    styleTags: ['Getting distracted on purpose'],
+    worksForKey: 'Distracting myself on purpose',
     substanceRelevance: [],
     originOrg: 'Marsha Linehan / DBT Skills Training Manual',
     evidenceTier: 'established',
@@ -380,6 +415,7 @@ export const INSTRUMENTS = [
   {
     id: 'soothe',
     triggerTags: ['Boredom', 'Loneliness'],
+    styleTags: ['Sitting with it quietly'],
     worksForKey: null,
     substanceRelevance: [],
     originOrg: 'Marsha Linehan / DBT Skills Training Manual',
@@ -409,6 +445,7 @@ export const INSTRUMENTS = [
   {
     id: 'accept',
     triggerTags: ['Physical pain'],
+    styleTags: ['Sitting with it quietly'],
     worksForKey: null,
     substanceRelevance: [],
     originOrg: 'Marsha Linehan / DBT Skills Training Manual',
@@ -436,6 +473,7 @@ export const INSTRUMENTS = [
   {
     id: 'cba',
     triggerTags: ['Wanting a reward', 'Boredom'],
+    styleTags: ['Thinking it through'],
     worksForKey: null,
     substanceRelevance: [],
     originOrg: 'SMART Recovery',
@@ -462,6 +500,7 @@ export const INSTRUMENTS = [
   {
     id: 'abc',
     triggerTags: ['Anger', 'Hunger'],
+    styleTags: ['Thinking it through'],
     worksForKey: null,
     substanceRelevance: [],
     originOrg: 'SMART Recovery (adapted from REBT / Albert Ellis)',
@@ -489,6 +528,7 @@ export const INSTRUMENTS = [
   {
     id: 'sober',
     triggerTags: ['Tiredness', 'Environment cues'],
+    styleTags: ['Sitting with it quietly'],
     worksForKey: null,
     substanceRelevance: [],
     originOrg: 'Sarah Bowen / Mindfulness-Based Relapse Prevention',
@@ -517,6 +557,7 @@ export const INSTRUMENTS = [
   {
     id: 'scan',
     triggerTags: ['Tiredness', 'Physical pain'],
+    styleTags: ['Sitting with it quietly'],
     worksForKey: null,
     substanceRelevance: [],
     originOrg: 'Sarah Bowen / Mindfulness-Based Relapse Prevention',
@@ -544,6 +585,7 @@ export const INSTRUMENTS = [
   {
     id: 'catch',
     triggerTags: ['Anger', 'Loneliness'],
+    styleTags: ['Thinking it through'],
     worksForKey: 'Writing it down',
     substanceRelevance: [],
     originOrg: 'Standard CBT thought-record practice',
@@ -571,6 +613,7 @@ export const INSTRUMENTS = [
   {
     id: 'ifthen',
     triggerTags: ['Environment cues', 'Easy money'],
+    styleTags: ['Being blunt with myself'],
     worksForKey: null,
     substanceRelevance: [],
     originOrg: 'Standard CBT practice (implementation intentions)',
@@ -597,6 +640,7 @@ export const INSTRUMENTS = [
   {
     id: 'defuse',
     triggerTags: ['Wanting a reward', 'Sexual arousal'],
+    styleTags: ['Sitting with it quietly'],
     worksForKey: null,
     substanceRelevance: [],
     originOrg: 'Acceptance and Commitment Therapy practice',
@@ -624,6 +668,7 @@ export const INSTRUMENTS = [
   {
     id: 'values',
     triggerTags: ['Boredom', 'Loneliness'],
+    styleTags: ['Thinking it through'],
     worksForKey: null,
     substanceRelevance: [],
     originOrg: 'Acceptance and Commitment Therapy practice',
@@ -651,6 +696,7 @@ export const INSTRUMENTS = [
   {
     id: 'control',
     triggerTags: ['Anger', 'Physical pain'],
+    styleTags: ['Thinking it through'],
     worksForKey: null,
     substanceRelevance: [],
     originOrg: 'Stoic philosophy (Epictetus) — informs modern CBT/REBT but not itself a clinical modality',
@@ -678,6 +724,7 @@ export const INSTRUMENTS = [
   {
     id: 'meaning',
     triggerTags: ['Boredom', 'Loneliness'],
+    styleTags: ['Thinking it through'],
     worksForKey: null,
     substanceRelevance: [],
     originOrg: 'Viktor Frankl — Logotherapy',
@@ -705,6 +752,7 @@ export const INSTRUMENTS = [
   {
     id: 'identity',
     triggerTags: ['Withdrawal', 'Anger'],
+    styleTags: ['Thinking it through'],
     worksForKey: null,
     substanceRelevance: [],
     originOrg: 'Jean-Paul Sartre (existentialism) and Alfred North Whitehead (process philosophy) — philosophical framing, not a clinical modality',
@@ -732,6 +780,7 @@ export const INSTRUMENTS = [
   {
     id: 'allornothing',
     triggerTags: ['Easy money', 'Wanting a reward'],
+    styleTags: ['Thinking it through'],
     worksForKey: null,
     substanceRelevance: [],
     originOrg: 'Alan Marlatt — relapse-prevention research on the abstinence violation effect',
@@ -758,6 +807,7 @@ export const INSTRUMENTS = [
   {
     id: 'habitloop',
     triggerTags: ['Environment cues', 'Boredom'],
+    styleTags: ['Being blunt with myself'],
     worksForKey: null,
     substanceRelevance: [],
     originOrg: 'William James (pragmatism) and modern habit-loop behavioural science',
@@ -785,6 +835,7 @@ export const INSTRUMENTS = [
   {
     id: 'myth',
     triggerTags: ['Loneliness', 'Withdrawal'],
+    styleTags: ['Thinking it through'],
     worksForKey: null,
     substanceRelevance: [],
     originOrg: 'Socratic method, applied as in cognitive-behavioural restructuring',
@@ -812,6 +863,7 @@ export const INSTRUMENTS = [
   {
     id: 'activation',
     triggerTags: ['Boredom', 'Tiredness'],
+    styleTags: ['Moving my body'],
     worksForKey: null,
     substanceRelevance: [],
     originOrg: "Standard behavioural activation practice; smallest-next-action framing informed by Taoist wu wei",
@@ -839,7 +891,8 @@ export const INSTRUMENTS = [
   {
     id: 'pmr',
     triggerTags: ['Physical pain', 'Withdrawal'],
-    worksForKey: null,
+    styleTags: ['Moving my body'],
+    worksForKey: 'Tensing and releasing my body',
     substanceRelevance: [],
     originOrg: 'Edmund Jacobson — Progressive Muscle Relaxation',
     evidenceTier: 'established',
@@ -866,7 +919,8 @@ export const INSTRUMENTS = [
   {
     id: 'eft',
     triggerTags: ['Wanting a reward', 'Easy money'],
-    worksForKey: null,
+    styleTags: ['Thinking it through'],
+    worksForKey: "Picturing how I'd feel later",
     substanceRelevance: [],
     originOrg: 'Episodic future thinking research in addiction and delay-discounting (Bickel, Snider, and related work)',
     evidenceTier: 'emerging',
@@ -893,6 +947,7 @@ export const INSTRUMENTS = [
   {
     id: 'turnover',
     triggerTags: ['Withdrawal', 'Physical pain'],
+    styleTags: ['Reaching out to someone'],
     worksForKey: null,
     substanceRelevance: [],
     originOrg: "Secularized adaptation of twelve-step 'turning it over'",
@@ -919,6 +974,7 @@ export const INSTRUMENTS = [
   {
     id: 'toughlove',
     triggerTags: ['Boredom', 'Easy money'],
+    styleTags: ['Being blunt with myself'],
     worksForKey: null,
     substanceRelevance: [],
     originOrg: "Directive coaching style, precedented in SMART Recovery's confrontational tradition and behavioural activation's 'act first' principle",
@@ -948,6 +1004,7 @@ export const RULE_BLOCK = {
   'Talking to a person': ['call'],
   'Outdoor or sport activities': ['leave'],
   'Anything over ten minutes': ['delay', 'night', 'surf'],
+  'Philosophy or wisdom-tradition framing': ['control', 'meaning', 'identity', 'habitloop', 'myth', 'turnover'],
   'Religious or spirituality talk': ['turnover'],
   'Tough love': ['toughlove'],
 };
