@@ -50,19 +50,20 @@ Everything the app knows lives in five entities, defined in `src/data.js` and he
 
 ### Profile (persisted)
 
-Set once during onboarding (`PROFILE_STEPS` in `data.js`, five screens), re-editable any time from "Your profile" → "Redo profile creation." Shape:
+Set once during onboarding (`PROFILE_STEPS` in `data.js`, six screens), re-editable any time from "Your profile" → "Redo profile creation." Shape:
 
 ```js
-{ subs: [], triggers: [], worked: [], ruledOut: [], treatment: [] }
+{ subs: [], triggers: [], worked: [], style: [], ruledOut: [], treatment: [] }
 ```
 
 | Field | Profile screen | Feeds into |
 |---|---|---|
 | `subs` | 01 — The substance | Nothing yet — `substanceRelevance` matching exists in the algorithm but is unpopulated across the library (see [Lever choice mechanic](#lever-choice-mechanic)). Currently informational only, shown on the profile view. |
 | `triggers` | 02 — The trigger | Tier 3 structural-affinity scoring, via each instrument's `triggerTags` |
-| `worked` | 03 — What works for you | Seeds initial `Scores` at profile completion, via each instrument's `worksForKey` |
-| `ruledOut` | 04 — Never suggest this | Tier 1 hard filter, via `RULE_BLOCK` — the only field with veto power |
-| `treatment` | 05 — Medication and health | Nothing yet — collected and shown on the profile view; no instrument currently reads it |
+| `worked` | 03 — What works for you | Seeds initial `Scores` at profile completion, via each instrument's `worksForKey` — 10 options now, 9 of the 31 instruments map to one |
+| `style` | 04 — How you cope | Tier 3 style-affinity scoring, via each instrument's `styleTags` — a flat, larger bonus than `triggers` or `subs` since it's stated preference rather than an inferred pattern (see [Lever choice mechanic](#lever-choice-mechanic)) |
+| `ruledOut` | 05 — Never suggest this | Tier 1 hard filter, via `RULE_BLOCK` — the only field with veto power |
+| `treatment` | 06 — Medication and health | Nothing yet — collected and shown on the profile view; no instrument currently reads it |
 
 ### SOS Answers (session-only)
 
@@ -89,13 +90,14 @@ The core content entity — one object per row in `INSTRUMENTS` (`data.js`):
 | `steps` | `{ t, label, body }[]` | Drives the timed Run screen; `t` is seconds, counted down live |
 | `tags` | `{ place[], mag[], emotion[], body[], time[] }` | Situational matching against tonight's SOS Answers — Tier 2 |
 | `triggerTags` | string[] | Matches `profile.triggers` — Tier 3 |
+| `styleTags` | string[] | Matches `profile.style` — Tier 3, larger flat bonus. Every instrument carries exactly one today |
 | `worksForKey` | string \| null | The one `profile.worked` option this instrument represents, if any |
 | `substanceRelevance` | string[] | Matches `profile.subs` — Tier 3. Empty on every instrument today; see the gap noted above |
 | `originOrg` | string | Who/what this is sourced from |
 | `evidenceTier` | `'established'` \| `'emerging'` | `'established'` = clinically-trialed modality; `'emerging'` = philosophy-sourced or newer-research, honestly, even where it inspired real clinical technique |
 | `reviewStatus` | string | Currently `'drafted'` on every instrument — none of this content has had an actual clinical review pass |
 
-`RULE_BLOCK` is the hard-filter map: `{ [ruledOutOptionLabel]: [instrumentId, ...] }`. Selecting that option in profile step 4 removes those instruments from candidacy entirely, no matter how well they'd otherwise score.
+`RULE_BLOCK` is the hard-filter map: `{ [ruledOutOptionLabel]: [instrumentId, ...] }`. Selecting that option in profile step 5 removes those instruments from candidacy entirely, no matter how well they'd otherwise score.
 
 ### Scores (persisted, "the learned tier")
 
@@ -121,7 +123,7 @@ An array of `{ when, name, detail, outcome, ok }` entries, newest first, shown o
 
 Intensity and available time are weighted 1.5× higher than context — the algorithm treats "how bad is it and how long do you have" as the dominant question, everything else as secondary.
 
-**Tier 3 — Structural affinity (small, capped).** Overlap between `profile.triggers` and the instrument's `triggerTags` → **+1 per match, capped at +2**. Overlap between `profile.subs` and `substanceRelevance` → **+1, capped at +1** (currently always 0 — see the Data model gap above). Deliberately small: background pattern should nudge, not compete with tonight's actual answers.
+**Tier 3 — Structural affinity (small, capped — plus one larger, flatter exception).** Overlap between `profile.triggers` and the instrument's `triggerTags` → **+1 per match, capped at +2**. Overlap between `profile.subs` and `substanceRelevance` → **+1, capped at +1** (currently always 0 — see the Data model gap above). Overlap between `profile.style` and the instrument's `styleTags` → **flat +2** if any tag matches — bigger than the trigger/substance bonuses because it's *stated* preference ("I reach for X when it's bad") rather than a pattern inferred from a trigger word, but still just one addend among several, never large enough on its own to overturn a strong Tier 2 situational match.
 
 **Tier 4 — Learned (small, capped).** `(holds / attempts) × 1.5` from `Scores`. An instrument with zero attempts contributes 0 — no assumption of effectiveness before it's been tried.
 
@@ -145,6 +147,7 @@ Full source: [`src/data.js`](src/data.js).
 - **Flow:** Cold water on your face → Breathe out longer than you breathe in → Sit down and say the time out loud
 - **Matches on:** place: `Home alone`, `Outdoors alone`, `Out in public`, `At work` · mag: `9–10`, `7–8` · body: `Wired`, `Shaky or sick`, `Heart racing`, `Sweating`, `Tense` · time: `Two minutes`, `Five minutes`
 - **Trigger affinity:** `Withdrawal`, `Physical pain`
+- **Coping style:** `Moving my body`
 - **Seeded by:** profile answer `Cold water` in "What has actually worked before?"
 - **Source:** Marsha Linehan / DBT Skills Training Manual · `evidenceTier: 'established'`
 
@@ -154,6 +157,7 @@ Full source: [`src/data.js`](src/data.js).
 - **Flow:** Stop. Freeze exactly where you are → Take a step back → Observe what's actually happening → Proceed mindfully
 - **Matches on:** place: `Home alone`, `Out in public`, `At work`, `Outdoors alone` · mag: `7–8`, `9–10` · body: `Wired`, `Heart racing` · time: `Two minutes`
 - **Trigger affinity:** `Wanting a reward`, `Easy money`, `Sexual arousal`
+- **Coping style:** `Being blunt with myself`
 - **Source:** Marsha Linehan / DBT Skills Training Manual · `evidenceTier: 'established'`
 
 **The Distraction List** (`accepts`)
@@ -162,6 +166,8 @@ Full source: [`src/data.js`](src/data.js).
 - **Flow:** Pick one thing, not five → Do it with your hands or your body → Keep going until the edge is off
 - **Matches on:** place: `Home alone`, `Home with other people`, `At work` · mag: `4–6`, `7–8` · emotion: `Boredom`, `Restlessness` · time: `Five minutes`, `Ten minutes`
 - **Trigger affinity:** `Boredom`, `Tiredness`
+- **Coping style:** `Getting distracted on purpose`
+- **Seeded by:** profile answer `Distracting myself on purpose` in "What has actually worked before?"
 - **Source:** Marsha Linehan / DBT Skills Training Manual · `evidenceTier: 'established'`
 
 **Something For Every Sense** (`soothe`)
@@ -170,6 +176,7 @@ Full source: [`src/data.js`](src/data.js).
 - **Flow:** Sight and sound → Touch and smell → Taste, last → Notice what changed
 - **Matches on:** place: `Home alone`, `Home with other people` · mag: `4–6` · emotion: `Emptiness`, `Boredom` · body: `Numb`, `Exhausted` · time: `Five minutes`, `Ten minutes`
 - **Trigger affinity:** `Boredom`, `Loneliness`
+- **Coping style:** `Sitting with it quietly`
 - **Source:** Marsha Linehan / DBT Skills Training Manual · `evidenceTier: 'established'`
 
 **This Is What's True Right Now** (`accept`)
@@ -178,6 +185,7 @@ Full source: [`src/data.js`](src/data.js).
 - **Flow:** Say the fact, not the story → Notice what you're fighting → Accept it without agreeing with it → Ask what's next, given that
 - **Matches on:** mag: `4–6`, `7–8` · emotion: `Grief`, `Anger`, `Shame` · time: `Ten minutes`, `Thirty minutes`
 - **Trigger affinity:** `Physical pain`
+- **Coping style:** `Sitting with it quietly`
 - **Source:** Marsha Linehan / DBT Skills Training Manual · `evidenceTier: 'established'`
 
 ### Mindfulness-Based Relapse Prevention (MBRP)
@@ -188,7 +196,9 @@ Full source: [`src/data.js`](src/data.js).
 - **Flow:** Find where it lives in your body → Rate it, then wait → Rate it again → Ride it down
 - **Matches on:** place: `Home alone`, `Home with other people` · mag: `4–6`, `7–8` · emotion: `Anxiety`, `Anticipation`, `Boredom`, `Restlessness` · time: `Ten minutes`, `Thirty minutes`
 - **Trigger affinity:** `Boredom`, `Wanting a reward`
-- **Blocked by:** "Anything over ten minutes" (ruled out in profile step 4)
+- **Coping style:** `Sitting with it quietly`
+- **Seeded by:** profile answer `Reminding myself it'll pass` in "What has actually worked before?"
+- **Blocked by:** "Anything over ten minutes" (ruled out in profile step 5)
 - **Source:** Alan Marlatt & Sarah Bowen / Mindfulness-Based Relapse Prevention · `evidenceTier: 'established'`
 
 **The SOBER Space** (`sober`)
@@ -197,6 +207,7 @@ Full source: [`src/data.js`](src/data.js).
 - **Flow:** Stop → Observe → Breathe → Expand → Respond
 - **Matches on:** place: `At work`, `Out in public` · mag: `4–6`, `7–8` · time: `Two minutes`, `Five minutes`
 - **Trigger affinity:** `Tiredness`, `Environment cues`
+- **Coping style:** `Sitting with it quietly`
 - **Source:** Sarah Bowen / Mindfulness-Based Relapse Prevention · `evidenceTier: 'established'`
 
 **Three Minutes, Head To Toe** (`scan`)
@@ -205,6 +216,7 @@ Full source: [`src/data.js`](src/data.js).
 - **Flow:** Feet and legs → Stomach and chest → Shoulders, jaw, hands → The whole body, at once
 - **Matches on:** place: `Home alone`, `Home with other people` · body: `Numb`, `Tense`, `Exhausted` · time: `Five minutes`, `Ten minutes`
 - **Trigger affinity:** `Tiredness`, `Physical pain`
+- **Coping style:** `Sitting with it quietly`
 - **Source:** Sarah Bowen / Mindfulness-Based Relapse Prevention · `evidenceTier: 'established'`
 
 ### SMART Recovery
@@ -215,8 +227,9 @@ Full source: [`src/data.js`](src/data.js).
 - **Flow:** Set fifteen minutes. Say the deal out loud → Put something in your hands → When it runs out, re-rate it
 - **Matches on:** mag: `4–6`, `1–3` · emotion: `Boredom`, `Emptiness` · body: `Numb`, `Exhausted`, `In pain` · time: `Thirty minutes`, `As long as it takes`
 - **Trigger affinity:** `Boredom`, `Wanting a reward`, `Easy money`
+- **Coping style:** `Getting distracted on purpose`
 - **Seeded by:** profile answer `Waiting it out` in "What has actually worked before?"
-- **Blocked by:** "Anything over ten minutes" (ruled out in profile step 4)
+- **Blocked by:** "Anything over ten minutes" (ruled out in profile step 5)
 - **Source:** SMART Recovery (DEADS) · `evidenceTier: 'established'`
 
 **The Two-Column Truth** (`cba`)
@@ -225,6 +238,7 @@ Full source: [`src/data.js`](src/data.js).
 - **Flow:** Short-term benefit, in your own words → Cost, in your own words → Put them side by side
 - **Matches on:** mag: `4–6`, `7–8` · emotion: `Anticipation`, `Boredom` · time: `Five minutes`, `Ten minutes`
 - **Trigger affinity:** `Wanting a reward`, `Boredom`
+- **Coping style:** `Thinking it through`
 - **Source:** SMART Recovery · `evidenceTier: 'established'`
 
 **Trace It Back** (`abc`)
@@ -233,6 +247,7 @@ Full source: [`src/data.js`](src/data.js).
 - **Flow:** Name the activator → Name the belief → Name the consequence → Question the belief, not the event
 - **Matches on:** mag: `4–6`, `7–8` · emotion: `Anger`, `Shame`, `Guilt` · time: `Ten minutes`
 - **Trigger affinity:** `Anger`, `Hunger`
+- **Coping style:** `Thinking it through`
 - **Source:** SMART Recovery (adapted from REBT / Albert Ellis) · `evidenceTier: 'established'`
 
 ### Cognitive Behavioural Therapy (CBT)
@@ -243,6 +258,7 @@ Full source: [`src/data.js`](src/data.js).
 - **Flow:** First ten minutes. Say it out loud → Hour three → Tomorrow, 7am → Now the other reel
 - **Matches on:** place: `Somewhere I used to use`, `Home alone` · mag: `4–6`, `7–8` · emotion: `Anticipation`, `Boredom`, `Emptiness`, `Guilt` · time: `Five minutes`, `Ten minutes`
 - **Trigger affinity:** `Wanting a reward`, `Easy money`
+- **Coping style:** `Thinking it through`
 - **Source:** Standard CBT relapse-prevention (decisional balance) · `evidenceTier: 'established'`
 
 **Catch The Thought** (`catch`)
@@ -251,6 +267,7 @@ Full source: [`src/data.js`](src/data.js).
 - **Flow:** Write the thought, word for word → Write the evidence for it → Write the evidence against it → Write a truer thought
 - **Matches on:** mag: `4–6` · emotion: `Shame`, `Guilt`, `Fear` · time: `Five minutes`, `Ten minutes`
 - **Trigger affinity:** `Anger`, `Loneliness`
+- **Coping style:** `Thinking it through`
 - **Seeded by:** profile answer `Writing it down` in "What has actually worked before?"
 - **Source:** Standard CBT thought-record practice · `evidenceTier: 'established'`
 
@@ -260,6 +277,7 @@ Full source: [`src/data.js`](src/data.js).
 - **Flow:** Name the exact trigger → Write the if-then, out loud → Do the "then" part now
 - **Matches on:** place: `Out in public`, `At work` · mag: `4–6`, `7–8` · time: `Two minutes`, `Five minutes`
 - **Trigger affinity:** `Environment cues`, `Easy money`
+- **Coping style:** `Being blunt with myself`
 - **Source:** Standard CBT practice (implementation intentions) · `evidenceTier: 'established'`
 
 ### Acceptance and Commitment Therapy (ACT)
@@ -270,6 +288,7 @@ Full source: [`src/data.js`](src/data.js).
 - **Flow:** Name the thought exactly → Add four words in front of it → Say it in a stupid voice → Let it sit there, don't argue
 - **Matches on:** mag: `4–6`, `7–8` · emotion: `Anticipation`, `Anxiety` · time: `Five minutes`
 - **Trigger affinity:** `Wanting a reward`, `Sexual arousal`
+- **Coping style:** `Sitting with it quietly`
 - **Source:** Acceptance and Commitment Therapy practice · `evidenceTier: 'established'`
 
 **What This Actually Costs** (`values`)
@@ -278,6 +297,7 @@ Full source: [`src/data.js`](src/data.js).
 - **Flow:** Name one person you don't want to let down → Name what kind of person you're trying to be → Ask if this gets you closer or further → Pick one thing that moves you toward it
 - **Matches on:** mag: `4–6` · emotion: `Emptiness`, `Grief` · time: `Ten minutes`, `Thirty minutes`
 - **Trigger affinity:** `Boredom`, `Loneliness`
+- **Coping style:** `Thinking it through`
 - **Source:** Acceptance and Commitment Therapy practice · `evidenceTier: 'established'`
 
 ### Stimulus control (behavioural)
@@ -288,8 +308,9 @@ Full source: [`src/data.js`](src/data.js).
 - **Flow:** Stand up. Now → Two hundred metres, any direction → Text one person that you left
 - **Matches on:** place: `Somewhere I used to use`, `Out in public` · mag: `7–8`, `9–10` · time: `Two minutes`, `Five minutes`, `Ten minutes`
 - **Trigger affinity:** `Environment cues`
+- **Coping style:** `Moving my body`
 - **Seeded by:** profile answer `Getting outside` in "What has actually worked before?"
-- **Blocked by:** "Outdoor or sport activities" (ruled out in profile step 4)
+- **Blocked by:** "Outdoor or sport activities" (ruled out in profile step 5)
 - **Source:** Behavioural stimulus-control literature (cue exposure) · `evidenceTier: 'established'`
 
 ### Trauma-informed grounding
@@ -300,6 +321,7 @@ Full source: [`src/data.js`](src/data.js).
 - **Flow:** Five things you can see → Four you can feel → Three you can hear → Two you can smell, one you can taste
 - **Matches on:** place: `Out in public`, `At work` · mag: `4–6`, `7–8` · emotion: `Anxiety`, `Shame`, `Fear` · body: `Wired`, `Shaky or sick`, `Nauseous`, `Tense` · time: `Two minutes`, `Five minutes`
 - **Trigger affinity:** `Physical pain`, `Withdrawal`
+- **Coping style:** `Sitting with it quietly`
 - **Source:** Trauma-informed grounding practice · `evidenceTier: 'established'`
 
 ### Social support (twelve-step adjacent)
@@ -310,8 +332,9 @@ Full source: [`src/data.js`](src/data.js).
 - **Flow:** Read the line → Press call before you edit it → Say where you are
 - **Matches on:** place: `Home alone`, `Outdoors alone` · mag: `7–8`, `9–10` · emotion: `Shame`, `Grief`, `Emptiness`, `Loneliness` · time: `Ten minutes`, `Thirty minutes`, `As long as it takes`
 - **Trigger affinity:** `Loneliness`
+- **Coping style:** `Reaching out to someone`
 - **Seeded by:** profile answer `Calling someone` in "What has actually worked before?"
-- **Blocked by:** "Talking to a person" (ruled out in profile step 4)
+- **Blocked by:** "Talking to a person" (ruled out in profile step 5)
 - **Source:** Peer-support / twelve-step-adjacent social support literature · `evidenceTier: 'established'`
 
 ### Behavioural (sleep as endpoint)
@@ -322,7 +345,8 @@ Full source: [`src/data.js`](src/data.js).
 - **Flow:** Phone on the far side of the room → Shower as hot as you can stand → Bed, lights off, something spoken
 - **Matches on:** place: `Home alone`, `Outdoors alone` · mag: `1–3`, `4–6` · body: `Exhausted`, `Numb` · time: `Thirty minutes`, `As long as it takes`
 - **Trigger affinity:** `Tiredness`
-- **Blocked by:** "Anything over ten minutes" (ruled out in profile step 4)
+- **Coping style:** `Moving my body`
+- **Blocked by:** "Anything over ten minutes" (ruled out in profile step 5)
 - **Source:** Behavioural sleep-as-endpoint literature · `evidenceTier: 'established'`
 
 ### Stoic philosophy
@@ -333,6 +357,8 @@ Full source: [`src/data.js`](src/data.js).
 - **Flow:** List what's not yours to move → Find the one thing that is → Put the rest down, on purpose → Do the one small thing
 - **Matches on:** mag: `4–6`, `7–8` · emotion: `Anger`, `Fear`, `Anxiety` · time: `Five minutes`
 - **Trigger affinity:** `Anger`, `Physical pain`
+- **Coping style:** `Thinking it through`
+- **Blocked by:** "Philosophy or wisdom-tradition framing" (ruled out in profile step 5)
 - **Source:** Stoic philosophy (Epictetus) — informs modern CBT/REBT but not itself a clinical modality · `evidenceTier: 'emerging'`
 
 ### Logotherapy
@@ -343,6 +369,8 @@ Full source: [`src/data.js`](src/data.js).
 - **Flow:** Name what this moment is actually testing → Name who is affected by how this goes → Say what getting through this would mean → Act like this moment matters, because it does
 - **Matches on:** mag: `4–6` · emotion: `Emptiness`, `Grief`, `Boredom` · time: `Five minutes`, `Ten minutes`
 - **Trigger affinity:** `Boredom`, `Loneliness`
+- **Coping style:** `Thinking it through`
+- **Blocked by:** "Philosophy or wisdom-tradition framing" (ruled out in profile step 5)
 - **Source:** Viktor Frankl — Logotherapy · `evidenceTier: 'emerging'`
 
 ### Existentialism / Process Philosophy
@@ -353,6 +381,8 @@ Full source: [`src/data.js`](src/data.js).
 - **Flow:** Say the label you're using on yourself → Notice it's a pattern, not a fact → Say what you're choosing right now instead → Let that choice be the whole point
 - **Matches on:** mag: `4–6`, `7–8` · emotion: `Shame`, `Guilt` · time: `Five minutes`
 - **Trigger affinity:** `Withdrawal`, `Anger`
+- **Coping style:** `Thinking it through`
+- **Blocked by:** "Philosophy or wisdom-tradition framing" (ruled out in profile step 5)
 - **Source:** Jean-Paul Sartre (existentialism) and Alfred North Whitehead (process philosophy) — philosophical framing, not a clinical modality · `evidenceTier: 'emerging'`
 
 ### Relapse-prevention research / Buddhist 'Middle Way'
@@ -363,6 +393,7 @@ Full source: [`src/data.js`](src/data.js).
 - **Flow:** Name the all-or-nothing rule → Say what's actually true → Separate the slip from the spiral
 - **Matches on:** mag: `4–6`, `7–8` · emotion: `Guilt`, `Shame` · time: `Two minutes`, `Five minutes`
 - **Trigger affinity:** `Easy money`, `Wanting a reward`
+- **Coping style:** `Thinking it through`
 - **Source:** Alan Marlatt — relapse-prevention research on the abstinence violation effect · `evidenceTier: 'established'`
 
 ### Pragmatism / habit science
@@ -373,6 +404,8 @@ Full source: [`src/data.js`](src/data.js).
 - **Flow:** Name the cue → Name the reward you're actually chasing → Pick a different action for the same reward → Do it now, in place of the old routine
 - **Matches on:** place: `Home alone`, `Out in public`, `At work` · mag: `4–6` · time: `Five minutes`, `Ten minutes`
 - **Trigger affinity:** `Environment cues`, `Boredom`
+- **Coping style:** `Being blunt with myself`
+- **Blocked by:** "Philosophy or wisdom-tradition framing" (ruled out in profile step 5)
 - **Source:** William James (pragmatism) and modern habit-loop behavioural science · `evidenceTier: 'established'`
 
 ### Socratic method
@@ -383,6 +416,8 @@ Full source: [`src/data.js`](src/data.js).
 - **Flow:** State the line exactly → Ask: is this actually true, or just familiar? → Ask: what would I tell someone else who said this? → Ask what the line is actually for
 - **Matches on:** mag: `4–6` · emotion: `Loneliness`, `Shame` · time: `Five minutes`, `Ten minutes`
 - **Trigger affinity:** `Loneliness`, `Withdrawal`
+- **Coping style:** `Thinking it through`
+- **Blocked by:** "Philosophy or wisdom-tradition framing" (ruled out in profile step 5)
 - **Source:** Socratic method, applied as in cognitive-behavioural restructuring · `evidenceTier: 'established'`
 
 ### Behavioural Activation
@@ -393,6 +428,7 @@ Full source: [`src/data.js`](src/data.js).
 - **Flow:** Pick the smallest possible action → Do just that one thing → Notice what shifted → Pick the next small thing
 - **Matches on:** emotion: `Boredom`, `Emptiness` · body: `Numb`, `Exhausted` · time: `Two minutes`, `Five minutes`
 - **Trigger affinity:** `Boredom`, `Tiredness`
+- **Coping style:** `Moving my body`
 - **Source:** Standard behavioural activation practice; smallest-next-action framing informed by Taoist wu wei · `evidenceTier: 'established'`
 
 ### Progressive Muscle Relaxation
@@ -403,6 +439,8 @@ Full source: [`src/data.js`](src/data.js).
 - **Flow:** Hands and arms → Shoulders and face → Stomach and chest → Legs and feet
 - **Matches on:** place: `Home alone`, `Home with other people` · body: `Tense`, `Wired`, `Shaky or sick` · time: `Five minutes`, `Ten minutes`
 - **Trigger affinity:** `Physical pain`, `Withdrawal`
+- **Coping style:** `Moving my body`
+- **Seeded by:** profile answer `Tensing and releasing my body` in "What has actually worked before?"
 - **Source:** Edmund Jacobson — Progressive Muscle Relaxation · `evidenceTier: 'established'`
 
 ### Episodic future thinking
@@ -413,6 +451,8 @@ Full source: [`src/data.js`](src/data.js).
 - **Flow:** Pick one exact future moment → Fill in the real details → Put today's decision inside that scene → Hold both scenes side by side
 - **Matches on:** mag: `4–6` · emotion: `Anticipation`, `Guilt` · time: `Five minutes`, `Ten minutes`
 - **Trigger affinity:** `Wanting a reward`, `Easy money`
+- **Coping style:** `Thinking it through`
+- **Seeded by:** profile answer `Picturing how I'd feel later` in "What has actually worked before?"
 - **Source:** Episodic future thinking research in addiction and delay-discounting (Bickel, Snider, and related work) · `evidenceTier: 'emerging'`
 
 ### Secularized twelve-step
@@ -423,7 +463,8 @@ Full source: [`src/data.js`](src/data.js).
 - **Flow:** Admit this one is bigger than willpower alone → Name what "handing it off" looks like tonight → Do that one thing
 - **Matches on:** mag: `7–8`, `9–10` · emotion: `Shame`, `Grief`, `Emptiness` · time: `Two minutes`, `Five minutes`
 - **Trigger affinity:** `Withdrawal`, `Physical pain`
-- **Blocked by:** "Religious or spirituality talk" (ruled out in profile step 4)
+- **Coping style:** `Reaching out to someone`
+- **Blocked by:** "Philosophy or wisdom-tradition framing", "Religious or spirituality talk" (ruled out in profile step 5)
 - **Source:** Secularized adaptation of twelve-step 'turning it over' · `evidenceTier: 'emerging'`
 
 ### Directive coaching (blunt register)
@@ -434,7 +475,8 @@ Full source: [`src/data.js`](src/data.js).
 - **Flow:** Stop the negotiation → Say what you're actually doing instead, out loud → Do it. Now.
 - **Matches on:** mag: `7–8`, `9–10` · emotion: `Anticipation` · time: `Two minutes`
 - **Trigger affinity:** `Boredom`, `Easy money`
-- **Blocked by:** "Tough love" (ruled out in profile step 4)
+- **Coping style:** `Being blunt with myself`
+- **Blocked by:** "Tough love" (ruled out in profile step 5)
 - **Source:** Directive coaching style, precedented in SMART Recovery's confrontational tradition and behavioural activation's 'act first' principle · `evidenceTier: 'emerging'`
 
 ## Deployment
