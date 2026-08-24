@@ -1,10 +1,10 @@
 # <picture><source media="(prefers-color-scheme: dark)" srcset=".github/assets/logo-dark.svg"><source media="(prefers-color-scheme: light)" srcset=".github/assets/logo-light.svg"><img alt="The Lever" src=".github/assets/logo-light.svg" width="240"></picture>
 
-**The Lever** is a crisis-intervention companion for addiction recovery. No sobriety counters, no meeting finder, no sponsor contact list — just a fast path from "I need it now" to a matched coping technique: a five-question forced-choice triage, an instrument picked against your profile and what's actually held for you before, a timed step-by-step run, and an outcome check-in that either reinforces what worked or falls back to a harm-reduction screen.
+**Live:** https://thelever.help
+
+**The Lever** is a crisis companion for addiction recovery. No sobriety counters, no meeting finder, no sponsor contact list — just a fast path from "I need it now" to a matched coping technique: a five-question forced-choice triage, an instrument picked against your profile and what's actually held for you before, a timed step-by-step run, and an outcome check-in that either reinforces what worked or falls back to a harm-reduction screen.
 
 This repo is a React/Vite single-page app that emulates the mobile experience inside an iOS device frame, for showcasing the product. The app is bilingual (English / Russian, EN by default, toggle on the Welcome screen).
-
-**Live:** https://thelever.help (the old https://kirtom.github.io/the-lever/ address redirects here)
 
 ## Contents
 
