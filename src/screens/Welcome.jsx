@@ -4,7 +4,7 @@ import { Logo } from '../components/Logo';
 export function Welcome({ derived, actions }) {
   const w = derived.ui.welcome;
   return (
-    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', background: '#201e1d', color: '#f3f2f2', padding: '96px 24px 52px' }}>
+    <div style={{ flex: 1, display: 'flex', flexDirection: 'column', justifyContent: 'space-between', background: '#201e1d', color: '#f3f2f2', padding: '72px 24px 38px' }}>
       <div>
         <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: 16 }}>
           <div style={{ display: 'flex', border: '1px solid rgba(243,242,242,.35)' }}>
@@ -38,21 +38,24 @@ export function Welcome({ derived, actions }) {
             </div>
           </div>
         </div>
-        <Logo width={330} height={140} style={{ margin: '0 auto' }} />
-        <div style={{ height: 2, background: '#ec3013', margin: '24px 0 20px', width: '100%' }} />
-        <ul style={{ listStyle: 'none', margin: '0 0 34px', padding: 0, display: 'flex', flexDirection: 'column', gap: 8, maxWidth: 340 }}>
+        <Logo width={288} height={122} style={{ margin: '0 auto' }} />
+        <div style={{ height: 2, background: '#ec3013', margin: '18px 0 16px', width: '100%' }} />
+        <ul style={{ listStyle: 'none', margin: '0 0 22px', padding: 0, display: 'flex', flexDirection: 'column', gap: 6, maxWidth: 340 }}>
           {w.denials.map((line) => (
-            <li key={line} style={{ fontSize: 16, lineHeight: 1.4, color: 'rgba(243,242,242,.72)', display: 'grid', gridTemplateColumns: '14px 1fr', gap: 10, alignItems: 'baseline' }}>
+            <li key={line} style={{ fontSize: 15, lineHeight: 1.35, color: 'rgba(243,242,242,.72)', display: 'grid', gridTemplateColumns: '14px 1fr', gap: 10, alignItems: 'baseline' }}>
               <span style={{ color: '#ec3013', fontWeight: 800 }}>—</span>
               <span>{line}</span>
             </li>
           ))}
         </ul>
-        <p style={{ fontSize: 17, lineHeight: 1.45, margin: 0, color: '#f3f2f2', maxWidth: 340, textWrap: 'balance' }}>
+        <p style={{ fontSize: 16, lineHeight: 1.4, margin: 0, color: '#f3f2f2', maxWidth: 340, textWrap: 'balance' }}>
           <span style={{ display: 'block', fontWeight: 800 }}>
-            {w.leadLine1} <br />
-            {w.leadLine2} <br />
-            {w.leadLine3}
+            {[w.leadLine1, w.leadLine2, w.leadLine3].filter(Boolean).map((line, i, all) => (
+              <span key={line}>
+                {line}
+                {i < all.length - 1 && <br />}
+              </span>
+            ))}
           </span>
           <span style={{ display: 'block', marginTop: 6 }}>
             {w.taglineBefore}
@@ -61,15 +64,15 @@ export function Welcome({ derived, actions }) {
           </span>
         </p>
       </div>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
         <Hoverable
           onClick={actions.startProfile}
           style={{
             background: '#ec3013',
             color: '#fff',
-            padding: '18px 20px',
+            padding: '15px 20px',
             fontWeight: 800,
-            fontSize: 17,
+            fontSize: 16,
             display: 'flex',
             justifyContent: 'space-between',
             alignItems: 'center',
@@ -85,8 +88,8 @@ export function Welcome({ derived, actions }) {
         <Hoverable
           onClick={actions.skipToHome}
           style={{
-            padding: '18px 20px',
-            fontSize: 17,
+            padding: '15px 20px',
+            fontSize: 15,
             fontWeight: 800,
             letterSpacing: '.02em',
             color: '#f3f2f2',
@@ -102,7 +105,7 @@ export function Welcome({ derived, actions }) {
           <span>{w.skip}</span>
           <span>→</span>
         </Hoverable>
-        <p style={{ fontSize: 13, lineHeight: 1.45, margin: '6px 0 0', color: 'rgba(243,242,242,.5)', maxWidth: 340 }}>
+        <p style={{ fontSize: 12, lineHeight: 1.4, margin: '4px 0 0', color: 'rgba(243,242,242,.5)', maxWidth: 340 }}>
           {w.noteLine1} <br />
           {w.noteLine2}
         </p>
