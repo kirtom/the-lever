@@ -4,7 +4,7 @@
 
 This repo is a React/Vite single-page app that emulates the mobile experience inside an iOS device frame, for showcasing the product. The app is bilingual (English / Russian, EN by default, toggle on the Welcome screen).
 
-**Live:** https://kirtom.github.io/the-lever/ (custom domain `thelever.help` planned)
+**Live:** https://thelever.help (the old https://kirtom.github.io/the-lever/ address redirects here)
 
 ## Contents
 
@@ -514,7 +514,9 @@ Full source: [`src/data.js`](src/data.js).
 
 ## Deployment
 
-Pushes to `main` deploy automatically via `.github/workflows/deploy.yml` to GitHub Pages. `vite.config.js` uses relative asset paths (`base: './'`) so the same build works unmodified at the current GitHub Pages project path and, once attached, at the root of the `thelever.help` custom domain.
+Pushes to `main` deploy automatically via `.github/workflows/deploy.yml` to GitHub Pages. `vite.config.js` uses relative asset paths (`base: './'`) so the same build works unmodified both at the `github.io` project path and at the root of the `thelever.help` custom domain.
+
+The domain is claimed by `public/CNAME`. That path matters: the workflow publishes the `dist` directory as the Pages artifact, and each deploy replaces the site wholesale — a `CNAME` at the repo root would never reach `dist` and the custom domain would drop on the next deploy. Vite copies `public/` into `dist/` verbatim, so the file ships with every build and GitHub re-reads it each time.
 
 ## Analytics
 
