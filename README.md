@@ -1,25 +1,45 @@
-# CODING AGENTS: READ THIS FIRST
+# The Lever
 
-This is a **handoff bundle** from Claude Design (claude.ai/design).
+**The Lever** is a crisis-intervention companion for addiction recovery. No sobriety counters, no meeting finder, no sponsor contact list — just a fast path from "I need it now" to a matched coping technique: a five-question forced-choice triage, an instrument picked against your profile and what's actually held for you before, a timed step-by-step run, and an outcome check-in that either reinforces what worked or falls back to a harm-reduction screen.
 
-A user mocked up designs in HTML/CSS/JS using an AI design tool, then exported this bundle so a coding agent can implement the designs for real.
+This repo is a React/Vite single-page app that emulates the mobile experience inside an iOS device frame, for showcasing the product.
 
-## What you should do — IMPORTANT
+**Live:** https://kirtom.github.io/the-lever/ (custom domain `thelever.help` planned)
 
-**Read the chat transcripts first.** There are 2 chat transcript(s) in `chats/`. The transcripts show the full back-and-forth between the user and the design assistant — they tell you **what the user actually wants** and **where they landed** after iterating. Don't skip them. The final HTML files are the output, but the chat is where the intent lives.
+## Stack
 
-**Read `project/The Lever.dc.html` in full.** The user had this file open when they triggered the handoff, so it's almost certainly the primary design they want built. Read it top to bottom — don't skim. Then **follow its imports**: open every file it pulls in (shared components, CSS, scripts) so you understand how the pieces fit together before you start implementing.
+- React 18 + Vite
+- No backend — profile, instrument scores, and the private log persist to `localStorage` only. Nothing syncs, nothing is shared.
 
-**If anything is ambiguous, ask the user to confirm before you start implementing.** It's much cheaper to clarify scope up front than to build the wrong thing.
+## Getting started
 
-## About the design files
+```bash
+npm install
+npm run dev      # local dev server
+npm run build    # production build to dist/
+npm run preview  # preview the production build
+```
 
-The design medium is **HTML/CSS/JS** — these are prototypes, not production code. Your job is to **recreate them pixel-perfectly** in whatever technology makes sense for the target codebase (React, Vue, native, whatever fits). Match the visual output; don't copy the prototype's internal structure unless it happens to fit.
+## Structure
 
-**Don't render these files in a browser or take screenshots unless the user asks you to.** Everything you need — dimensions, colors, layout rules — is spelled out in the source. Read the HTML and CSS directly; a screenshot won't tell you anything they don't.
+```
+src/
+  data.js           instrument library, profile-step and SOS-question definitions
+  useLever.js        state machine + recommendation logic (matching, scoring, timers)
+  App.jsx            screen router inside the iOS device frame
+  components/         IOSDevice frame, Logo, Hoverable
+  screens/            one component per screen (welcome, profile, home, SOS, …)
+design/                the original Claude Design handoff — chat transcripts and the
+                        HTML/CSS/JS prototype this app was built from. Not part of the
+                        shipped app; kept for provenance and future design iteration.
+```
 
-## Bundle contents
+## Deployment
 
-- `README.md` — this file
-- `chats/` — conversation transcripts (read these!)
-- `project/` — the `Addiction Recovery Management App` project files (HTML prototypes, assets, components)
+Pushes to `main` deploy automatically via `.github/workflows/deploy.yml` to GitHub Pages. `vite.config.js` uses relative asset paths (`base: './'`) so the same build works unmodified at the current GitHub Pages project path and, once attached, at the root of the `thelever.help` custom domain.
+
+## Recommendation logic
+
+Instrument matching runs in four tiers, most to least influential: a hard filter from the profile's "never suggest this" answers, tonight's five SOS answers (dominant signal), a small structural-affinity bonus from the profile's triggers/substance answers, and a learned hold-rate bonus from what's actually worked for this person before (seeded from the profile's "what's worked before" step, then reinforced by real outcomes). See `src/useLever.js` for the implementation.
+
+Every instrument in `src/data.js` carries its source framework (`framework`, `originOrg`, `evidenceTier`) and a `reviewStatus` — currently `'drafted'` across the board. None of the library's content has had an actual clinical review pass yet; treat it accordingly before it reaches real users.
