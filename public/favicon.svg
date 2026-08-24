@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64" role="img" aria-label="The Lever">
+  <!-- Favicon built from the wordmark: the "L" carries the same split the logo
+       gives "LEVER" — everything above the rule sheared and red, everything
+       below it upright and off-white. The shear is exaggerated relative to the
+       full logo so the gesture survives being drawn at 16px. -->
+  <defs>
+    <clipPath id="lv-top"><rect x="0" y="0" width="64" height="26"/></clipPath>
+    <clipPath id="lv-bot"><rect x="0" y="26" width="64" height="38"/></clipPath>
+    <path id="lv-l" d="M14 4h14v42h22v14H14z"/>
+  </defs>
+  <rect width="64" height="64" fill="#201e1d"/>
+  <g clip-path="url(#lv-bot)"><use href="#lv-l" fill="#f3f2f2"/></g>
+  <g clip-path="url(#lv-top)"><use href="#lv-l" fill="#ec3013" transform="rotate(-7 14 26)"/></g>
+  <rect x="6" y="24" width="52" height="4" fill="#f3f2f2"/>
+</svg>

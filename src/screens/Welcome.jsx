@@ -39,7 +39,9 @@ export function Welcome({ derived, actions }) {
           </div>
         </div>
         <Logo width={288} height={122} style={{ margin: '0 auto' }} />
-        <div style={{ height: 2, background: '#ec3013', margin: '18px 0 16px', width: '100%' }} />
+        <div style={{ height: 2, background: '#ec3013', margin: '14px 0 0', width: '100%' }} />
+        <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '.1em', textTransform: 'uppercase', color: 'rgba(243,242,242,.82)', padding: '8px 0', textAlign: 'center' }}>{w.tagline}</div>
+        <div style={{ height: 2, background: '#ec3013', margin: '0 0 14px', width: '100%' }} />
         <ul style={{ listStyle: 'none', margin: '0 0 22px', padding: 0, display: 'flex', flexDirection: 'column', gap: 6, maxWidth: 340 }}>
           {w.denials.map((line) => (
             <li key={line} style={{ fontSize: 15, lineHeight: 1.35, color: 'rgba(243,242,242,.72)', display: 'grid', gridTemplateColumns: '14px 1fr', gap: 10, alignItems: 'baseline' }}>
