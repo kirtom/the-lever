@@ -522,11 +522,13 @@ The app can report anonymous, aggregate usage to [Umami](https://umami.is) — a
 
 **What's tracked**, all as bare event names or an instrument `id` — never a display label, never anything typed by the user:
 
-- Screen views (which of the 12 screens is showing)
+- Screen views, sent as **virtual pageviews** so each screen appears as its own row in Umami's Pages and Journey reports. The app is a single document that never changes its location, so Umami's automatic tracker is switched off (`data-auto-track="false"`) and `src/analytics.js` emits one pageview per screen instead. Paths are listed in `screenPath()` — `/welcome`, `/home`, `/onboarding/step-N`, `/sos/question-N`, `/sos/matching`, `/lever`, `/lever/run`, and so on. Onboarding steps and SOS questions are numbered individually because the drop-off point inside those two flows is the only way to see where people give up.
 - Navigation taps: profile setup started/skipped/completed, SOS started, harm-reduction screen opened, language toggled, "clear all data" used
 - Triage shape: whether a run took the fast path, and whether the hopelessness floor was hit — in both cases the bare fact, never the answer or the score behind it
 - Which instrument got matched, swapped to, opened from the shelf, started, held, or failed
 
 **What's never tracked**, in line with the app's "your profile stays on this phone" promise: any profile or SOS answer value (substance, trigger, place, magnitude, emotion, body sensation, time available), the harm-reduction precaution checklist, shared location/coordinates, or any identifier that could tie events to a person or a specific crisis. See `src/analytics.js` and the `track(...)` call sites in `src/useLever.js` for the exhaustive list — there is no event beyond what's described above.
+
+One honest caveat about the numbered question paths: because the questionnaire branches at Q7, a session that reaches `/sos/question-8` did *not* pick one of the two short-time options, and a session that stops at `/sos/question-7` did. Position in the flow therefore reveals which side of that one branch a session took — the same thing the `sos_fast_path` event already reports. It is coarse, aggregate and non-identifying, and no other answer value is recoverable this way, but it is a real inference and worth naming rather than glossing. Drop the `-N` suffix from the `question` case in `screenPath()` if you would rather not have it, at the cost of losing per-question drop-off.
 
 **Setup:** sign up at [cloud.umami.is](https://cloud.umami.is) (free tier) or self-host, add a website, and set its website ID as a repository variable named `VITE_UMAMI_WEBSITE_ID` (Settings → Secrets and variables → Actions → Variables) — the deploy workflow passes it through at build time. For local development, copy `.env.example` to `.env` and fill it in.
