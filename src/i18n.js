@@ -1,6 +1,7 @@
 export const UI = {
   en: {
     welcome: {
+      tagline: 'Crisis companion for addiction recovery',
       denials: ['No sobriety counter.', 'No meetings search.', 'No sponsor calls.', 'No savings calculator.'],
       leadLine1: 'Tap the red button.',
       leadLine2: 'Answer a few questions.',
@@ -96,6 +97,7 @@ export const UI = {
   },
   ru: {
     welcome: {
+      tagline: 'Кризисный помощник в выздоровлении',
       denials: ['Без счётчика трезвости.', 'Без поиска групп.', 'Без звонков спонсору.', 'Без калькулятора сэкономленных денег.'],
       leadLine1: 'Нажми красную кнопку.',
       leadLine2: 'Ответь на несколько вопросов.',
