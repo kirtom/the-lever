@@ -44,10 +44,7 @@ export function Home({ derived, actions }) {
           userSelect: 'none',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 12, width: '100%' }}>
-          <span style={{ fontSize: 44, lineHeight: 0.9, fontWeight: 800, letterSpacing: '-.045em', textAlign: 'center' }}>{h.help}</span>
-          <span style={{ fontSize: 34, fontWeight: 800, lineHeight: 0.9 }}>→</span>
-        </div>
+        <div style={{ fontSize: 44, lineHeight: 0.9, fontWeight: 800, letterSpacing: '-.045em', textAlign: 'center', width: '100%' }}>{h.help}</div>
         <div style={{ fontSize: 13, fontWeight: 600, opacity: 0.9, textAlign: 'center', lineHeight: 1.3 }}>{h.helpSubtitle}</div>
       </div>
 
