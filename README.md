@@ -15,6 +15,7 @@ This repo is a React/Vite single-page app that emulates the mobile experience in
 - [Lever choice mechanic](#lever-choice-mechanic)
 - [Levers library](#levers-library)
 - [Deployment](#deployment)
+- [Analytics](#analytics)
 
 ## Stack
 
@@ -36,6 +37,7 @@ npm run preview  # preview the production build
 src/
   data.js           instrument library, profile-step and SOS-question definitions (bilingual, id-keyed)
   i18n.js            screen-chrome UI strings, EN/RU
+  analytics.js       opt-in, privacy-scoped Umami event tracking (see "Analytics")
   useLever.js        state machine + recommendation logic (matching, scoring, timers)
   App.jsx            screen router inside the iOS device frame
   components/         IOSDevice frame, Logo, Hoverable
@@ -497,3 +499,17 @@ Full source: [`src/data.js`](src/data.js).
 ## Deployment
 
 Pushes to `main` deploy automatically via `.github/workflows/deploy.yml` to GitHub Pages. `vite.config.js` uses relative asset paths (`base: './'`) so the same build works unmodified at the current GitHub Pages project path and, once attached, at the root of the `thelever.help` custom domain.
+
+## Analytics
+
+The app can report anonymous, aggregate usage to [Umami](https://umami.is) — a cookieless, open-source analytics tool that doesn't fingerprint or build cross-site profiles. It's **off by default**: `src/analytics.js` only injects Umami's script if `VITE_UMAMI_WEBSITE_ID` is set at build time, and it never loads at all when the browser sends `Do Not Track`.
+
+**What's tracked**, all as bare event names or an instrument `id` — never a display label, never anything typed by the user:
+
+- Screen views (which of the 12 screens is showing)
+- Navigation taps: profile setup started/skipped/completed, SOS started, harm-reduction screen opened, language toggled, "clear all data" used
+- Which instrument got matched, swapped to, opened from the shelf, started, held, or failed
+
+**What's never tracked**, in line with the app's "your profile stays on this phone" promise: any profile or SOS answer value (substance, trigger, place, magnitude, emotion, body sensation, time available), the harm-reduction precaution checklist, shared location/coordinates, or any identifier that could tie events to a person or a specific crisis. See `src/analytics.js` and the `track(...)` call sites in `src/useLever.js` for the exhaustive list — there is no event beyond what's described above.
+
+**Setup:** sign up at [cloud.umami.is](https://cloud.umami.is) (free tier) or self-host, add a website, and set its website ID as a repository variable named `VITE_UMAMI_WEBSITE_ID` (Settings → Secrets and variables → Actions → Variables) — the deploy workflow passes it through at build time. For local development, copy `.env.example` to `.env` and fill it in.
