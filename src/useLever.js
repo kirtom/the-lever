@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { bandFor, FAST_PATH_TIME, HARM_ITEMS, HOPELESS_FLAG_AT, INSTRUMENTS, PROFILE_STEPS, QUESTIONS, RULE_BLOCK } from './data';
 import { UI } from './i18n';
-import { track } from './analytics';
+import { screenPath, track, trackScreen } from './analytics';
 
 const STORAGE_KEY = 'the-lever:v1';
 
@@ -100,9 +100,15 @@ export function useLever() {
     }
   }, [profile, scores, history, onboarded, lang]);
 
+  // One virtual pageview per screen. The app never changes its location, so
+  // without this Umami records a single pageview for the whole session and
+  // every screen past the entry point is invisible. Profile steps and SOS
+  // questions each get their own path — the drop-off point inside those two
+  // flows is the thing worth measuring, and it collapses to nothing if all
+  // seven steps or thirteen questions share one URL.
   useEffect(() => {
-    track('screen_view', { screen });
-  }, [screen]);
+    trackScreen(screenPath(screen, { stepIndex, qIndex }));
+  }, [screen, stepIndex, qIndex]);
 
   const toggleLang = useCallback(() => {
     setLang((l) => {
