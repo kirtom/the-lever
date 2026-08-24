@@ -1,10 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { HARM_ITEMS, INSTRUMENTS, PROFILE_STEPS, QUESTIONS, RULE_BLOCK } from './data';
+import { UI } from './i18n';
 
 const STORAGE_KEY = 'the-lever:v1';
-const REGISTER_LABEL = 'SET UP MY PROFILE';
 
 const EMPTY_PROFILE = { subs: [], triggers: [], worked: [], style: [], ruledOut: [], treatment: [] };
+
+const PROFILE_ROW_KEYS = ['subs', 'triggers', 'worked', 'style', 'ruledOut', 'treatment'];
 
 function loadStored() {
   try {
@@ -24,10 +26,21 @@ function clock(sec) {
   return m + ':' + (s < 10 ? '0' : '') + s;
 }
 
+function findProfileOption(stepKey, id) {
+  const step = PROFILE_STEPS.find((s) => s.key === stepKey);
+  return step?.options.find((o) => o.id === id);
+}
+
+function findQuestionOption(qKey, id) {
+  const q = QUESTIONS.find((qq) => qq.key === qKey);
+  return q?.options.find((o) => o.id === id);
+}
+
 export function useLever() {
   const stored = useMemo(loadStored, []);
 
   const [screen, setScreen] = useState(stored?.onboarded ? 'home' : 'welcome');
+  const [lang, setLang] = useState(stored?.lang === 'ru' ? 'ru' : 'en');
   const [stepIndex, setStepIndex] = useState(0);
   const [profile, setProfile] = useState(stored?.profile || EMPTY_PROFILE);
   const [answers, setAnswers] = useState({});
@@ -46,6 +59,8 @@ export function useLever() {
   const [history, setHistory] = useState(stored?.history || []);
   const [onboarded, setOnboarded] = useState(!!stored?.onboarded);
 
+  const t = UI[lang];
+
   const tickTimer = useRef(null);
   const matchTimer = useRef(null);
 
@@ -59,11 +74,13 @@ export function useLever() {
 
   useEffect(() => {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify({ profile, scores, history, onboarded }));
+      localStorage.setItem(STORAGE_KEY, JSON.stringify({ profile, scores, history, onboarded, lang }));
     } catch {
       // best-effort persistence only
     }
-  }, [profile, scores, history, onboarded]);
+  }, [profile, scores, history, onboarded, lang]);
+
+  const toggleLang = useCallback(() => setLang((l) => (l === 'en' ? 'ru' : 'en')), []);
 
   const currentInst = useCallback(() => INSTRUMENTS.find((i) => i.id === instId) || INSTRUMENTS[0], [instId]);
 
@@ -83,12 +100,12 @@ export function useLever() {
     setScreen('home');
   }, []);
 
-  const toggleProfileOption = useCallback((key, value) => {
+  const toggleProfileOption = useCallback((key, id) => {
     setProfile((p) => {
       const list = (p[key] || []).slice();
-      const i = list.indexOf(value);
+      const i = list.indexOf(id);
       if (i >= 0) list.splice(i, 1);
-      else list.push(value);
+      else list.push(id);
       return { ...p, [key]: list };
     });
   }, []);
@@ -131,10 +148,10 @@ export function useLever() {
       INSTRUMENTS.forEach((inst) => {
         if (blocked[inst.id] || (exclude || []).indexOf(inst.id) >= 0) return;
         let s = 0;
-        const t = inst.tags;
+        const tags = inst.tags;
         // Tier 2 — situational: tonight's five answers. Dominant signal.
         ['place', 'mag', 'emotion', 'body', 'time'].forEach((k) => {
-          if (t[k] && ans[k] && t[k].indexOf(ans[k]) >= 0) s += k === 'mag' || k === 'time' ? 3 : 2;
+          if (tags[k] && ans[k] && tags[k].indexOf(ans[k]) >= 0) s += k === 'mag' || k === 'time' ? 3 : 2;
         });
         // Tier 3 — structural affinity: background profile pattern. Capped low so
         // it nudges rather than competes with tonight's situational answers.
@@ -208,8 +225,8 @@ export function useLever() {
   }, []);
 
   const answerQuestion = useCallback(
-    (key, label) => {
-      const next = { ...answers, [key]: label };
+    (key, id) => {
+      const next = { ...answers, [key]: id };
       setAnswers(next);
       if (qIndex === QUESTIONS.length - 1) {
         runMatch(next);
@@ -280,16 +297,7 @@ export function useLever() {
       const cur = prev[inst.id] || [0, 0];
       return { ...prev, [inst.id]: [cur[0] + 1, cur[1] + 1] };
     });
-    setHistory((prev) => [
-      {
-        when: 'Today',
-        name: inst.name,
-        detail: (answers.mag || '—') + ' · ' + (answers.place || '—').toLowerCase() + ' · ' + (answers.emotion || '—').toLowerCase(),
-        outcome: 'Success',
-        ok: true,
-      },
-      ...prev,
-    ]);
+    setHistory((prev) => [{ when: 'today', instId: inst.id, mag: answers.mag, place: answers.place, emotion: answers.emotion, ok: true }, ...prev]);
     setOnboarded(true);
     setScreen('held');
   }, [currentInst, answers]);
@@ -300,10 +308,7 @@ export function useLever() {
       const cur = prev[inst.id] || [0, 0];
       return { ...prev, [inst.id]: [cur[0], cur[1] + 1] };
     });
-    setHistory((prev) => [
-      { when: 'Today', name: inst.name, detail: (answers.mag || '—') + ' · ' + (answers.place || '—').toLowerCase() + ' · retried', outcome: 'Failure', ok: false },
-      ...prev,
-    ]);
+    setHistory((prev) => [{ when: 'today', instId: inst.id, mag: answers.mag, place: answers.place, retried: true, ok: false }, ...prev]);
     setOnboarded(true);
     setScreen('home');
   }, [currentInst, answers]);
@@ -361,10 +366,9 @@ export function useLever() {
 
   const sendLocation = useCallback(() => {
     const c = coords;
-    const text = c
-      ? 'I need someone to know where I am: ' + c.la + ', ' + c.lo
-      : "I need someone to know where I am. My location didn't come through — call me.";
-    const shareData = { title: 'Where I am', text };
+    const loc = UI[lang].location;
+    const text = c ? loc.withCoordsPrefix + c.la + ', ' + c.lo : loc.noCoords;
+    const shareData = { title: loc.shareTitle, text };
     if (c) shareData.url = 'https://maps.google.com/?q=' + c.la + ',' + c.lo;
     if (navigator.share) {
       navigator
@@ -382,14 +386,11 @@ export function useLever() {
     } else {
       setShareState('failed');
     }
-  }, [coords]);
+  }, [coords, lang]);
 
   const logRelapse = useCallback(() => {
     const done = harmChecked.length;
-    setHistory((prev) => [
-      { when: 'Today', name: 'Harm reduction', detail: done ? done + ' of 6 precautions taken' : 'no precautions logged', outcome: 'Relapse', ok: 'relapse' },
-      ...prev,
-    ]);
+    setHistory((prev) => [{ when: 'today', isHarm: true, precautionsCount: done, ok: 'relapse' }, ...prev]);
     setOnboarded(true);
     goHome();
   }, [harmChecked, goHome]);
@@ -416,101 +417,123 @@ export function useLever() {
     .sort((x, y) => y.rate - x.rate || y.sc[1] - x.sc[1])
     .slice(0, 5);
 
+  const questionLabel = (qKey, id) => findQuestionOption(qKey, id)?.[lang] || id;
+  const profileLabel = (stepKey, id) => findProfileOption(stepKey, id)?.[lang] || id;
+
   const readbackBits = [];
-  if (answers.place) readbackBits.push(answers.place.toLowerCase());
-  if (answers.mag) readbackBits.push('at ' + answers.mag);
-  if (answers.emotion) readbackBits.push(answers.emotion.toLowerCase() + ' underneath');
-  if (answers.time) readbackBits.push(answers.time.toLowerCase() + ' to work with');
+  if (answers.place) readbackBits.push(questionLabel('place', answers.place).toLowerCase());
+  if (answers.mag) readbackBits.push(t.readback.magPrefix + questionLabel('mag', answers.mag));
+  if (answers.emotion) readbackBits.push(questionLabel('emotion', answers.emotion).toLowerCase() + t.readback.emotionSuffix);
+  if (answers.time) readbackBits.push(questionLabel('time', answers.time).toLowerCase() + t.readback.timeSuffix);
 
   const heldStats = scores[inst.id] || [0, 0];
 
   const derived = {
     frameDark: screen === 'welcome' || screen === 'question' || screen === 'matching' || screen === 'run' || screen === 'after' || screen === 'harm',
-    registerLabel: REGISTER_LABEL,
+    lang,
+    ui: t,
+    registerLabel: t.welcome.registerLabel,
 
     step: {
-      counter: 'Step ' + (stepIndex + 1) + ' of ' + PROFILE_STEPS.length,
-      kicker: step.kicker,
-      title: step.title,
-      hint: step.hint,
-      note: step.note,
+      counter: t.stepCounter(stepIndex + 1, PROFILE_STEPS.length),
+      kicker: step.kicker[lang],
+      title: step.title[lang],
+      hint: step.hint[lang],
+      note: step.note?.[lang],
       hasNote: !!step.note,
-      cta: stepIndex === PROFILE_STEPS.length - 1 ? 'Done' : 'Continue',
+      cta: stepIndex === PROFILE_STEPS.length - 1 ? t.held.done : { en: 'Continue', ru: 'Далее' }[lang],
       options: step.options.map((o) => ({
-        label: o,
-        checked: (profile[step.key] || []).indexOf(o) >= 0,
-        toggle: () => toggleProfileOption(step.key, o),
+        id: o.id,
+        label: o[lang],
+        checked: (profile[step.key] || []).indexOf(o.id) >= 0,
+        toggle: () => toggleProfileOption(step.key, o.id),
       })),
     },
 
     q: {
-      counter: 'Question ' + (qIndex + 1) + ' / ' + QUESTIONS.length,
-      title: q.title,
-      options: q.options.map((o) => ({ label: o.label, sub: o.sub, pick: () => answerQuestion(q.key, o.label) })),
+      counter: t.questionCounter(qIndex + 1, QUESTIONS.length),
+      title: q.title[lang],
+      options: q.options.map((o) => ({ id: o.id, label: o[lang], sub: o.sub[lang], pick: () => answerQuestion(q.key, o.id) })),
     },
 
-    matchLine: ['Reading your answers…', 'Filtering what you ruled out…', 'One instrument fits.'][matchTick] || 'One instrument fits.',
+    matchLine: t.matching.lines[matchTick] || t.matching.lines[t.matching.lines.length - 1],
 
     frameworkOpen,
 
     inst: {
-      kicker: fromShelf ? 'From your levers' : 'Your instrument',
-      name: inst.name,
-      framework: inst.framework + ' ↗',
-      frameworkNote: inst.frameworkNote,
-      why: inst.why,
-      does: inst.does,
-      duration: inst.duration,
-      stepCount: inst.steps.length + ' steps',
-      cta: 'Start — ' + inst.duration,
+      kicker: fromShelf ? t.inst.fromShelf : t.inst.fresh,
+      name: inst.name[lang],
+      framework: inst.framework[lang] + ' ↗',
+      frameworkNote: inst.frameworkNote[lang],
+      why: inst.why[lang],
+      does: inst.does[lang],
+      duration: inst.duration[lang],
+      stepCount: inst.steps.length + t.instrument.stepCountSuffix,
+      cta: t.instrument.startPrefix + inst.duration[lang],
     },
-    readback: readbackBits.length ? "You're " + readbackBits.join(', ') + '.' : 'Pulled from what has held for you before.',
+    readback: readbackBits.length ? t.readback.prefix + readbackBits.join(', ') + '.' : t.readback.fallback,
 
     run: {
-      counter: 'Step ' + (runStep + 1) + ' of ' + inst.steps.length,
+      counter: t.stepCounter(runStep + 1, inst.steps.length),
       pct: Math.round(((runStep + 1) / inst.steps.length) * 100) + '%',
       clock: clock(remaining),
-      label: runStepData.label,
-      body: runStepData.body,
-      cta: runStep === inst.steps.length - 1 ? 'Finished' : 'Next step',
+      label: runStepData.label[lang],
+      body: runStepData.body[lang],
+      cta: runStep === inst.steps.length - 1 ? t.run.finished : t.run.nextStep,
     },
 
-    heldLine: '"' + inst.name + '" moved up your levers. It has now worked ' + heldStats[0] + ' times out of ' + heldStats[1] + '.',
+    heldLine: t.heldLine(inst.name[lang], heldStats[0], heldStats[1]),
 
-    harmItems: HARM_ITEMS.map((h, i) => ({ label: h.label, sub: h.sub, checked: harmChecked.indexOf(i) >= 0, toggle: () => toggleHarmItem(i) })),
-    locationCta: { idle: 'Share my location', shared: 'Location shared ✓', copied: 'Coordinates copied ✓', failed: "Couldn't share — try again" }[shareState] || 'Share my location',
-    locationNote: coords
-      ? 'Pinned to ' + coords.la + ', ' + coords.lo
-      : shareState === 'failed'
-        ? 'Location unavailable. Say the address out loud instead.'
-        : 'Location is fetched when this screen opens, so sharing is instant.',
+    harmItems: HARM_ITEMS.map((h, i) => ({ label: h.label[lang], sub: h.sub[lang], checked: harmChecked.indexOf(i) >= 0, toggle: () => toggleHarmItem(i) })),
+    locationCta: t.location.cta[shareState] || t.location.cta.idle,
+    locationNote: coords ? t.location.pinnedPrefix + coords.la + ', ' + coords.lo : shareState === 'failed' ? t.location.unavailable : t.location.instant,
 
     shelf: ranked.map((r, i) => ({
       rank: '0' + (i + 1),
-      name: r.i.name,
-      dur: '≈ ' + r.i.duration,
-      framework: r.i.framework,
+      name: r.i.name[lang],
+      dur: t.shelfDur(r.i.duration[lang]),
+      framework: r.i.framework[lang],
       open: () => openInstrumentFromShelf(r.i.id),
     })),
 
-    history: history.map((h) => ({
-      when: h.when,
-      name: h.name,
-      detail: h.detail,
-      outcome: h.outcome,
-      color: h.ok === 'relapse' ? '#f3f2f2' : h.ok ? 'var(--success)' : '#ec3013',
-      bg: h.ok === 'relapse' ? '#201e1d' : 'transparent',
-      chip: h.ok === 'relapse',
-    })),
+    history: history.map((h) => {
+      let name;
+      let detail;
+      if (h.instId) {
+        const histInst = INSTRUMENTS.find((i) => i.id === h.instId);
+        name = histInst ? histInst.name[lang] : h.name || '—';
+        const magL = h.mag ? questionLabel('mag', h.mag) : '—';
+        const placeL = h.place ? questionLabel('place', h.place).toLowerCase() : '—';
+        if (h.retried) {
+          detail = magL + ' · ' + placeL + ' · ' + t.history.retried;
+        } else {
+          const emotionL = h.emotion ? questionLabel('emotion', h.emotion).toLowerCase() : '—';
+          detail = magL + ' · ' + placeL + ' · ' + emotionL;
+        }
+      } else if (h.isHarm) {
+        name = t.harm.harmLogName;
+        detail = h.precautionsCount ? t.history.precautionsTaken(h.precautionsCount) : t.history.noPrecautions;
+      } else {
+        // Legacy entry from before this shape existed — render its frozen text as-is.
+        name = h.name || '—';
+        detail = h.detail || '—';
+      }
+      const outcome = h.ok === 'relapse' ? t.history.outcomes.relapse : h.ok ? t.history.outcomes.success : t.history.outcomes.failure;
+      return {
+        when: h.when === 'today' ? t.history.today : h.when,
+        name,
+        detail,
+        outcome,
+        color: h.ok === 'relapse' ? '#f3f2f2' : h.ok ? 'var(--success)' : '#ec3013',
+        bg: h.ok === 'relapse' ? '#201e1d' : 'transparent',
+        chip: h.ok === 'relapse',
+      };
+    }),
 
-    profileRows: [
-      { label: 'The substance', value: (profile.subs || []).join(', ') || 'Not set' },
-      { label: 'The trigger', value: (profile.triggers || []).join(', ') || 'Not set' },
-      { label: 'What works for you', value: (profile.worked || []).join(', ') || 'Not set' },
-      { label: 'How you cope', value: (profile.style || []).join(', ') || 'Not set' },
-      { label: 'Never suggest this', value: (profile.ruledOut || []).join(', ') || 'Nothing ruled out' },
-      { label: 'Medication and health', value: (profile.treatment || []).join(', ') || 'Not set' },
-    ],
+    profileRows: PROFILE_ROW_KEYS.map((key) => ({
+      label: PROFILE_STEPS.find((s) => s.key === key).kicker[lang].replace(/^\d+\s*—\s*/, ''),
+      value: (profile[key] || []).map((id) => profileLabel(key, id)).join(', ') || (key === 'ruledOut' ? t.profileView.nothingRuledOut : t.profileView.notSet),
+    })),
   };
 
   return {
@@ -537,6 +560,7 @@ export function useLever() {
       sendLocation,
       logRelapse,
       redoProfile: startProfile,
+      toggleLang,
     },
   };
 }

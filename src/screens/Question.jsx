@@ -2,12 +2,13 @@ import { Hoverable } from '../components/Hoverable';
 
 export function Question({ derived, actions }) {
   const { q } = derived;
+  const qi = derived.ui.question;
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#161514', color: '#f3f2f2', padding: '58px 22px 26px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', fontSize: 11, letterSpacing: '.12em', textTransform: 'uppercase', fontWeight: 800 }}>
         <span style={{ color: '#ec3013' }}>{q.counter}</span>
         <span onClick={actions.goHome} style={{ cursor: 'pointer', color: 'rgba(243,242,242,.45)' }}>
-          Exit
+          {qi.exit}
         </span>
       </div>
       <div style={{ height: 2, background: '#ec3013', margin: '8px 0 14px' }} />
@@ -15,7 +16,7 @@ export function Question({ derived, actions }) {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
         {q.options.map((opt) => (
           <Hoverable
-            key={opt.label}
+            key={opt.id}
             onClick={opt.pick}
             style={{
               border: '2px solid rgba(243,242,242,.3)',
@@ -36,7 +37,7 @@ export function Question({ derived, actions }) {
       </div>
       <div style={{ flex: 1 }} />
       <Hoverable as="div" onClick={actions.backQuestion} style={{ fontSize: 12, color: 'rgba(243,242,242,.4)', cursor: 'pointer' }} hoverStyle={{ color: '#f3f2f2' }}>
-        ← Back
+        {qi.back}
       </Hoverable>
     </div>
   );

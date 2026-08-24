@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { Hoverable } from '../components/Hoverable';
 
-function ClearAllData({ onConfirm }) {
+function ClearAllData({ onConfirm, hi }) {
   const [confirming, setConfirming] = useState(false);
   const revertTimer = useRef(null);
 
@@ -31,23 +31,24 @@ function ClearAllData({ onConfirm }) {
       }}
       hoverStyle={{ background: confirming ? '#fff2ef' : '#eae7e7' }}
     >
-      {confirming ? "Tap again to permanently delete everything" : 'Clear all data'}
+      {confirming ? hi.confirmClear : hi.clear}
     </Hoverable>
   );
 }
 
 export function History({ derived, actions }) {
+  const hi = derived.ui.history;
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#f3f2f2', padding: '74px 22px 30px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, letterSpacing: '.1em', textTransform: 'uppercase', fontWeight: 800 }}>
-        <span>Private log</span>
+        <span>{hi.title}</span>
         <span onClick={actions.goHome} style={{ cursor: 'pointer', color: '#9b9797' }}>
-          Close
+          {hi.close}
         </span>
       </div>
       <div style={{ height: 2, background: '#201e1d', margin: '10px 0 6px' }} />
-      <p style={{ fontSize: 12.5, color: '#605d5d', margin: '0 0 14px' }}>On this device only. Nothing syncs, nothing is shared.</p>
-      {derived.history.length === 0 && <p style={{ fontSize: 13, color: '#9b9797', margin: 0 }}>Nothing logged yet.</p>}
+      <p style={{ fontSize: 12.5, color: '#605d5d', margin: '0 0 14px' }}>{hi.note}</p>
+      {derived.history.length === 0 && <p style={{ fontSize: 13, color: '#9b9797', margin: 0 }}>{hi.empty}</p>}
       {derived.history.map((ep, i) => (
         <div key={i} style={{ display: 'flex', gap: 14, padding: '13px 0', borderBottom: '1px solid rgba(32,30,29,.22)' }}>
           <div style={{ width: 52, fontFamily: 'ui-monospace,Menlo,monospace', fontSize: 11, color: '#605d5d', paddingTop: 3 }}>{ep.when}</div>
@@ -61,7 +62,7 @@ export function History({ derived, actions }) {
         </div>
       ))}
       <div style={{ flex: 1 }} />
-      <ClearAllData onConfirm={actions.clearAllData} />
+      <ClearAllData onConfirm={actions.clearAllData} hi={hi} />
     </div>
   );
 }

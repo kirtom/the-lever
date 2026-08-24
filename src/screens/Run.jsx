@@ -2,6 +2,7 @@ import { Hoverable } from '../components/Hoverable';
 
 export function Run({ derived, actions }) {
   const { run, inst } = derived;
+  const ri = derived.ui.run;
   return (
     <div style={{ flex: 1, display: 'flex', flexDirection: 'column', background: '#161514', color: '#f3f2f2', padding: '74px 22px 40px' }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 11, letterSpacing: '.12em', textTransform: 'uppercase', fontWeight: 800 }}>
@@ -25,7 +26,7 @@ export function Run({ derived, actions }) {
           <span>→</span>
         </Hoverable>
         <Hoverable as="div" onClick={actions.bail} style={{ padding: '12px 2px', fontSize: 13, color: 'rgba(243,242,242,.45)', cursor: 'pointer' }} hoverStyle={{ color: '#ec3013' }}>
-          This isn't working →
+          {ri.notWorking}
         </Hoverable>
       </div>
     </div>

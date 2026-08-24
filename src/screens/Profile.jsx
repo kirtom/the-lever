@@ -14,7 +14,7 @@ export function Profile({ derived, actions }) {
       <div style={{ display: 'flex', flexDirection: 'column', gap: 6, flex: 1 }}>
         {step.options.map((opt) => (
           <Hoverable
-            key={opt.label}
+            key={opt.id}
             onClick={opt.toggle}
             style={{
               display: 'flex',
